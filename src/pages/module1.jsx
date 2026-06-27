@@ -138,24 +138,28 @@ export default function OKRUserManagement({ currentUser = { role: 'Employee' } }
         {/* HEADER */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box>
-            <Typography variant="h5" fontWeight={700}>Organization Directory</Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="h4" letterSpacing="-0.03em" sx={{ mt: 0.5, backgroundColor: '#5694bb', p: 1, borderRadius: 1, display: 'inline-block' }} style={{ color: '#000000', fontWeight: 600 }}>
+              Organization Directory
+            </Typography>
+            <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5, backgroundColor: '#6ab9c0', p: 1, borderRadius: 1, display: 'inline-block' }} style={{ color: '#000000', fontWeight: 600 }}>
               {canManageUsers ? 'Manage internal access and view RBAC alignments' : 'View organizational structure and team alignments'}
             </Typography>
           </Box>
-          <IconButton onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')} sx={{ bgcolor: 'background.paper' }}>
-            {mode === 'dark' ? <LightMode color="warning" /> : <DarkMode color="primary" />}
-          </IconButton>
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+            <IconButton onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')} sx={{ bgcolor: 'background.paper' }}>
+              {mode === 'dark' ? <LightMode color="warning" /> : <DarkMode color="primary" />}
+            </IconButton>
+          </Box>
         </Box>
 
         {/* ACTION TOOLBAR */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: 'background.paper', p: 2, borderRadius: 2 }}>
-          <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: '#4e88ad', p: 2, borderRadius: 2 }}>
+          <Box sx={{ display: 'flex', gap: 3, alignItems: 'center'}} >
             <TextField
               placeholder="Search directory..."
               size="small"
               InputProps={{ startAdornment: <InputAdornment position="start"><Search fontSize="small" /></InputAdornment> }}
-              sx={{ width: 300 }}
+              sx={{ width: 300, color: 'text.primary', bgcolor: 'background.paper', borderRadius: 1, '& .MuiOutlinedInput-notchedOutline': { borderColor: 'divider' } }}
             />
             
             <ToggleButtonGroup
@@ -173,7 +177,7 @@ export default function OKRUserManagement({ currentUser = { role: 'Employee' } }
           {/* SECURED BUTTONS: Only render if Executive/Admin */}
           {canManageUsers && (
             <Box sx={{ display: 'flex', gap: 2 }}>
-              <Button variant="outlined" startIcon={<UploadFile />} onClick={() => setModalOpen(true)}>
+              <Button variant="contained" startIcon={<UploadFile />} onClick={() => setModalOpen(true)}>
                 Bulk Import
               </Button>
               <Button variant="contained" startIcon={<Add />} onClick={() => setDrawerOpen(true)}>
