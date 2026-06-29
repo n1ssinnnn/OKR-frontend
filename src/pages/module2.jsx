@@ -241,10 +241,10 @@ export default function OKRTrackingEngine({ currentUser = { id: 1, name: 'Dr. Ar
         {/* HEADER SECTION */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 5, maxWidth: 1000, mx: 'auto' }}>
           <Box>
-            <Typography variant="h4" letterSpacing="-0.03em" sx={{ mt: 0.5, backgroundColor: '#ad7305', p: 1, borderRadius: 1, display: 'inline-block' }} style={{ color: '#000000', fontWeight: 600 }}>
+            <Typography variant="h4" letterSpacing="-0.03em" sx={{ mt: 0.5, backgroundColor: '#000000', p: 1, borderRadius: 1, display: 'inline-block' }} style={{ color: '#ffffff', fontWeight: 600 }}>
               Objectives & Key Results
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5, backgroundColor: '#d99004', p: 1, borderRadius: 1, display: 'inline-block' }} style={{ color: '#000000', fontWeight: 600 }}>
+            <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5, backgroundColor: '#000000', p: 1, borderRadius: 1, display: 'inline-block' }} style={{ color: '#ffffff', fontWeight: 600 }}>
               Track strategic goals and measurable outcomes.
             </Typography>
           </Box>
@@ -267,21 +267,21 @@ export default function OKRTrackingEngine({ currentUser = { id: 1, name: 'Dr. Ar
           elevation={0} 
           sx={{ 
             maxWidth: 1000, mx: 'auto', mb: 4, p: 3, 
-            bgcolor: '#716304', borderRadius: 3, 
+            bgcolor: '#373e42', borderRadius: 3, 
             border: mode === 'dark' ? '1px solid #2A2D3A' : '1px solid #E2E8F0' 
           }}
         >
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2}}>
-            <Typography variant="subtitle2" fontWeight={700} style={{ color: '#000000', fontWeight: 600 }}>
+            <Typography variant="subtitle2" fontWeight={700} style={{ color: '#ffffff', fontWeight: 600 }}>
               2026 FISCAL / ACADEMIC YEAR
             </Typography>
-            <Typography variant="subtitle2" fontWeight={700} style={{ color: '#000000', fontWeight: 600 }}>
+            <Typography variant="subtitle2" fontWeight={700} style={{ color: '#ffffff', fontWeight: 600 }}>
               Q2 ({currentYearProgress}% Complete)
             </Typography>
           </Box>
           
           <Box sx={{ position: 'relative', width: '100%', height: 32, bgcolor: mode === 'dark' ? '#22252E' : '#EDF2F7', borderRadius: 2, display: 'flex', overflow: 'visible', mt: 3 }}>
-            <Box sx={{ position: 'absolute', top: 0, left: 0, height: '100%', width: `${currentYearProgress}%`, bgcolor: '#02f202', opacity: 0.15, borderRadius: '8px 0 0 8px' }} />
+            <Box sx={{ position: 'absolute', top: 0, left: 0, height: '100%', width: `${currentYearProgress}%`, bgcolor: '#0c7a65', opacity: 1.00, borderRadius: '8px 0 0 8px' }} />
             <Box sx={{ position: 'absolute', top: -10, bottom: -10, left: `${currentYearProgress}%`, width: 2, bgcolor: 'primary.main', zIndex: 10 }}>
               <Box sx={{ position: 'absolute', top: -22, left: '50%', transform: 'translateX(-50%)', bgcolor: '#02d2f2', color: mode === 'dark' ? '#000' : '#FFF', fontSize: '0.65rem', px: 1, py: 0.2, borderRadius: 1, fontWeight: 800, whiteSpace: 'nowrap' }}>
                 TODAY

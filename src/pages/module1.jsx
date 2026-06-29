@@ -138,10 +138,10 @@ export default function OKRUserManagement({ currentUser = { role: 'Employee' } }
         {/* HEADER */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box>
-            <Typography variant="h4" letterSpacing="-0.03em" sx={{ mt: 0.5, backgroundColor: '#5694bb', p: 1, borderRadius: 1, display: 'inline-block' }} style={{ color: '#000000', fontWeight: 600 }}>
+            <Typography variant="h4" letterSpacing="-0.03em" sx={{ mt: 0.5, p: 1, borderRadius: 1, display: 'inline-block' }} style={{ color: '#ffffff', fontWeight: 600 }}>
               Organization Directory
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5, backgroundColor: '#6ab9c0', p: 1, borderRadius: 1, display: 'inline-block' }} style={{ color: '#000000', fontWeight: 600 }}>
+            <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5, p: 1, borderRadius: 1, display: 'inline-block' }} style={{ color: '#ffffff', fontWeight: 600 }}>
               {canManageUsers ? 'Manage internal access and view RBAC alignments' : 'View organizational structure and team alignments'}
             </Typography>
           </Box>
@@ -153,7 +153,7 @@ export default function OKRUserManagement({ currentUser = { role: 'Employee' } }
         </Box>
 
         {/* ACTION TOOLBAR */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: '#4e88ad', p: 2, borderRadius: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: '#373e42', p: 2, borderRadius: 2 }}>
           <Box sx={{ display: 'flex', gap: 3, alignItems: 'center'}} >
             <TextField
               placeholder="Search directory..."
