@@ -19,97 +19,170 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Divider,
   MenuItem,
   Tooltip,
   Card,
-  InputAdornment,
+  ToggleButtonGroup,
+  ToggleButton,
+  Paper,
+  AvatarGroup,
+  Select,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 import {
   ExpandMore,
   Add,
   DarkMode,
   LightMode,
-  Flag,
   TrackChanges,
-  WarningAmber,
-  CheckCircle,
-  Lock,
-  Domain,
-  Groups,
-  Person,
+  AccountTree,
+  OpenInNew,
+  ViewList,
   Send,
-  Forum,
+  PersonPin,
 } from '@mui/icons-material';
 
-// --- RBAC SIMULATION DATA ---
-const simulatedUsers = [
-  { id: 1, name: 'Dr. Arisara', role: 'Executive', department: 'Policy Strategy' },
-  { id: 2, name: 'Lead Engineer', role: 'Manager', department: 'Engineering Hub' },
-  { id: 3, name: 'LMS Developer', role: 'Employee', department: 'Engineering Hub' },
-  { id: 4, name: 'UI Designer', role: 'Employee', department: 'Engineering Hub' },
+// --- DIRECTORY USERS MATCHING YOUR ORGANIZATION MAP ---
+const directoryUsers = [
+  { id: 1, name: 'Dr. Arisara (Advisor)', role: 'Executive', department: 'Policy Strategy', initial: 'D' },
+  { id: 2, name: 'Lead Engineer Team', role: 'Team Lead', department: 'Engineering Hub', reportsTo: 'Dr. Arisara (Advisor)', initial: 'L' },
+  { id: 3, name: 'Campaign Director Team', role: 'Team Lead', department: 'Marketing', reportsTo: 'Dr. Arisara (Advisor)', initial: 'C' },
+  { id: 4, name: 'Policy Drafter Team', role: 'Team Lead', department: 'Policy Strategy', reportsTo: 'Dr. Arisara (Advisor)', initial: 'P' },
+  { id: 5, name: 'LMS Developer', role: 'Employee', department: 'Engineering Hub', reportsTo: 'Lead Engineer', initial: 'L' },
+  { id: 6, name: 'AI Media Artist', role: 'Employee', department: 'Marketing', reportsTo: 'Campaign Director', initial: 'A' },
 ];
 
+// --- OKRs REFLECTING THE EXACT DELEGATION HIERARCHY ---
 const initialOKRs = [
   {
     id: 'o1',
-    level: 'Company',
-    title: 'Increase Institutional Tech Adoption by 50%',
-    department: 'Global',
-    ownerId: 1,
-    ownerName: 'Dr. Arisara',
-    progress: 75,
+    level: 'Team',
+    title: 'Deploy LMS Core System & Infrastructure',
+    description: 'Ensure system stability, zero downtime, and high throughput backend architecture for institutional rollouts.',
+    department: 'Engineering Hub',
+    ownerId: 2,
+    ownerName: 'Lead Engineer Team',
+    assignedBy: 'Dr. Arisara (Advisor)',
+    assignedByRole: 'Executive',
+    assignedByInitial: 'D',
+    startDate: '2026-01-01',
+    dueDate: '2026-06-30',
+    progress: 85,
     status: 'On Track',
+    tasksCount: 8,
     keyResults: [
-      { id: 'kr1', title: 'Roll out gamification to all major departments', current: 3, target: 4, unit: 'Depts' },
+      { id: 'kr1', title: 'Maintain 99.9% server uptime', current: 99, target: 100, unit: '%' },
+      { id: 'kr2', title: 'Reduce API response time to under 100ms', current: 80, target: 100, unit: '%' }
     ],
     comments: []
   },
   {
     id: 'o2',
     level: 'Team',
-    title: 'Deploy LMS Gamification Features',
-    department: 'Engineering Hub',
-    ownerId: 2,
-    ownerName: 'Lead Engineer',
-    progress: 40,
+    title: 'Launch National Phak Phrom Soep Campaign',
+    description: 'Coordinate digital outreach strategy across primary channels to achieve nationwide institutional engagement.',
+    department: 'Phak Phrom Soep',
+    ownerId: 3,
+    ownerName: 'Campaign Director',
+    assignedBy: 'Dr. Arisara (Advisor)',
+    assignedByRole: 'Executive',
+    assignedByInitial: 'D',
+    startDate: '2026-02-01',
+    dueDate: '2026-08-31',
+    progress: 60,
     status: 'At Risk',
+    tasksCount: 12,
     keyResults: [
-      { id: 'kr2', title: 'Integrate achievement badges backend', current: 40, target: 100, unit: '%' },
+      { id: 'kr3', title: 'Reach 1,000,000 total digital impressions', current: 600000, target: 1000000, unit: 'Views' }
     ],
     comments: [
-      { id: 'c1', author: 'Dr. Arisara', role: 'Executive', text: 'We need to speed up the backend integration to meet the Q2 deadline.', timestamp: '2 days ago' }
+      { id: 'c1', author: 'Dr. Arisara (Advisor)', text: 'Please sync with AI Media Artist to finalize campaign assets.', timestamp: '1 day ago' }
     ]
   },
   {
     id: 'o3',
-    level: 'Individual',
-    title: 'Build Visual Learning Nodes UI',
-    department: 'Engineering Hub',
-    ownerId: 3, 
-    ownerName: 'LMS Developer',
-    progress: 90,
+    level: 'Team',
+    title: 'Draft Strategic Policy Framework 2026',
+    description: 'Synthesize institutional requirements into actionable policy drafts for upcoming legislative approval.',
+    department: 'Policy Strategy',
+    ownerId: 4,
+    ownerName: 'Policy Drafter',
+    assignedBy: 'Dr. Arisara (Advisor)',
+    assignedByRole: 'Executive',
+    assignedByInitial: 'D',
+    startDate: '2026-01-15',
+    dueDate: '2026-05-30',
+    progress: 95,
     status: 'On Track',
+    tasksCount: 4,
     keyResults: [
-      { id: 'kr3', title: 'Complete 10 frontend React components', current: 9, target: 10, unit: 'Components' },
+      { id: 'kr4', title: 'Complete draft whitepaper sections', current: 4, target: 4, unit: 'Sections' }
     ],
-    comments: [
-      { id: 'c2', author: 'Lead Engineer', role: 'Manager', text: 'Great progress! Let me know if you need help with the final component.', timestamp: '1 day ago' },
-      { id: 'c3', author: 'LMS Developer', role: 'Employee', text: 'Thanks! Just wrapping up the CSS grid now.', timestamp: '5 hours ago' }
-    ]
+    comments: []
+  },
+  {
+    id: 'o4',
+    level: 'Individual',
+    title: 'Build Interactive Learning UI Components',
+    description: 'Implement responsive React user interface components and visual interactive charts for student dashboards.',
+    department: 'Engineering Hub',
+    ownerId: 5,
+    ownerName: 'LMS Developer',
+    assignedBy: 'Lead Engineer Team',
+    assignedByRole: 'Team Lead',
+    assignedByInitial: 'L',
+    startDate: '2026-03-01',
+    dueDate: '2026-06-15',
+    progress: 75,
+    status: 'On Track',
+    tasksCount: 5,
+    keyResults: [
+      { id: 'kr5', title: 'Deliver 10 React components', current: 8, target: 10, unit: 'Components' }
+    ],
+    comments: []
+  },
+  {
+    id: 'o5',
+    level: 'Individual',
+    title: 'Produce High-Impact AI Visual Media Assets',
+    description: 'Generate key visuals, promotional banners, and social media art using generative AI workflows.',
+    department: 'Phak Phrom Soep',
+    ownerId: 6,
+    ownerName: 'AI Media Artist',
+    assignedBy: 'Campaign Director Team',
+    assignedByRole: 'Team Lead',
+    assignedByInitial: 'C',
+    startDate: '2026-03-15',
+    dueDate: '2026-07-01',
+    progress: 40,
+    status: 'At Risk',
+    tasksCount: 7,
+    keyResults: [
+      { id: 'kr6', title: 'Deliver 25 finalized campaign graphics', current: 10, target: 25, unit: 'Assets' }
+    ],
+    comments: []
   }
 ];
 
-export default function OKRTrackingEngine({ currentUser = { id: 1, name: 'Dr. Arisara', role: 'Executive', department: 'Policy Strategy' } }) {
+export default function OKRTrackingEngine() {
   const [mode, setMode] = useState('dark');
+  const [viewMode, setViewMode] = useState('flow'); // 'flow' or 'list'
+  const [currentUser, setCurrentUser] = useState(directoryUsers[0]); // Default to Executive Dr. Arisara
   const [okrs, setOkrs] = useState(initialOKRs);
   const [commentInputs, setCommentInputs] = useState({});
-  
+  const [selectedFlowOkr, setSelectedFlowOkr] = useState(null);
+
   // Modal State
   const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [draftLevel, setDraftLevel] = useState('');
+  const [newOkr, setNewOkr] = useState({
+    title: '',
+    description: '',
+    assignedToId: directoryUsers[1].id,
+    dueDate: '2026-06-30'
+  });
 
-  // --- THEME CONFIGURATION ---
+  // --- THEME ---
   const theme = useMemo(() => createTheme({
     palette: {
       mode,
@@ -117,75 +190,76 @@ export default function OKRTrackingEngine({ currentUser = { id: 1, name: 'Dr. Ar
         background: { default: '#0F1115', paper: '#1A1D24' },
         primary: { main: '#4ECDC4' },
         secondary: { main: '#A389F4' },
-        success: { main: '#50E3C2' },
-        warning: { main: '#FFB86C' },
-        error: { main: '#f9bee4' },
-        company: { main: '#A389F4' }, 
-        team: { main: '#4ECDC4' },    
-        individual: { main: '#8B92A5' } 
+        success: { main: '#22C55E' },
+        warning: { main: '#EAB308' },
+        error: { main: '#EF4444' },
       } : {
         background: { default: '#F4F7FE', paper: '#FFFFFF' },
-        primary: { main: '#4318FF' },
-        secondary: { main: '#39B8FF' },
-        company: { main: '#4318FF' },
-        team: { main: '#39B8FF' },
-        individual: { main: '#8F9BBA' }
+        primary: { main: '#2563EB' },
+        secondary: { main: '#9333EA' },
+        success: { main: '#16A34A' },
+        warning: { main: '#CA8A04' },
+        error: { main: '#DC2626' },
       })
     },
     typography: { fontFamily: '"Inter", sans-serif' },
     shape: { borderRadius: 12 },
-    components: {
-      MuiAccordion: {
-        styleOverrides: {
-          root: {
-            boxShadow: 'none',
-            '&:before': { display: 'none' },
-            backgroundColor: mode === 'dark' ? '#1A1D24' : '#FFFFFF',
-            border: mode === 'dark' ? '1px solid #2A2D3A' : '1px solid #E2E8F0',
-            borderRadius: '12px !important',
-            marginBottom: '16px',
-          }
-        }
-      }
-    }
   }), [mode]);
 
-  // --- STRICT RBAC PERMISSION ENGINES ---
-  const canViewOkr = (okr) => {
-    if (currentUser.role === 'Executive') return true;
-    if (currentUser.role === 'Manager') return okr.level === 'Company' || okr.department === currentUser.department;
-    if (currentUser.role === 'Employee') return okr.level === 'Company' || (okr.level === 'Team' && okr.department === currentUser.department) || (okr.level === 'Individual' && okr.ownerId === currentUser.id);
-    return false;
-  };
+  // --- GROUPING FOR FLOWCHART (Assignor -> Assigned OKRs) ---
+  const assignorGroups = useMemo(() => {
+    const groups = {};
+    okrs.forEach(okr => {
+      const assignorName = okr.assignedBy;
+      if (!groups[assignorName]) {
+        groups[assignorName] = {
+          assignorName: okr.assignedBy,
+          assignorRole: okr.assignedByRole,
+          initial: okr.assignedByInitial || okr.assignedBy.charAt(0),
+          okrs: [],
+          avgProgress: 0,
+        };
+      }
+      groups[assignorName].okrs.push(okr);
+    });
 
-  const canEditOkr = (okr) => {
-    if (currentUser.role === 'Executive') return true; 
-    if (currentUser.role === 'Manager') return okr.level !== 'Company' && okr.department === currentUser.department;
-    if (currentUser.role === 'Employee') return okr.level === 'Individual' && okr.ownerId === currentUser.id;
-    return false;
-  };
+    Object.keys(groups).forEach(key => {
+      const g = groups[key];
+      const sum = g.okrs.reduce((acc, curr) => acc + curr.progress, 0);
+      g.avgProgress = Math.round(sum / g.okrs.length);
+    });
 
-  const canCommentOnOkr = (okr) => {
-    // Executives can comment on Team or Individual OKRs
-    if (currentUser.role === 'Executive') return okr.level === 'Team' || okr.level === 'Individual';
-    // Managers can comment on Individual OKRs in their department
-    if (currentUser.role === 'Manager') return okr.level === 'Individual' && okr.department === currentUser.department;
-    // Employees can reply to their own OKR
-    if (currentUser.role === 'Employee') return okr.ownerId === currentUser.id;
-    return false;
-  };
+    return Object.values(groups);
+  }, [okrs]);
 
-  const getAvailableCreationLevels = () => {
-    if (currentUser.role === 'Executive') return ['Company', 'Individual']; 
-    if (currentUser.role === 'Manager') return ['Team', 'Individual'];
-    if (currentUser.role === 'Employee') return ['Individual'];
-    return [];
-  };
+  // --- HANDLERS ---
+  const handleCreateOkr = () => {
+    if (!newOkr.title) return;
+    const assignee = directoryUsers.find(u => u.id === Number(newOkr.assignedToId));
 
-  // --- ACTIONS ---
-  const handleOpenDraft = () => {
-    setDraftLevel(availableLevels[0] || 'Individual'); 
-    setCreateModalOpen(true);
+    const createdOkr = {
+      id: `o_${Date.now()}`,
+      level: assignee?.role === 'Employee' ? 'Individual' : 'Team',
+      title: newOkr.title,
+      description: newOkr.description || 'No detailed scope provided.',
+      department: assignee?.department || currentUser.department,
+      ownerId: assignee?.id,
+      ownerName: assignee?.name || 'Unassigned',
+      assignedBy: currentUser.name,
+      assignedByRole: currentUser.role,
+      assignedByInitial: currentUser.initial,
+      startDate: '2026-04-01',
+      dueDate: newOkr.dueDate,
+      progress: 0,
+      status: 'On Track',
+      tasksCount: 1,
+      keyResults: [],
+      comments: []
+    };
+
+    setOkrs(prev => [createdOkr, ...prev]);
+    setCreateModalOpen(false);
+    setNewOkr({ title: '', description: '', assignedToId: directoryUsers[1].id, dueDate: '2026-06-30' });
   };
 
   const handlePostComment = (okrId) => {
@@ -195,14 +269,15 @@ export default function OKRTrackingEngine({ currentUser = { id: 1, name: 'Dr. Ar
     const newComment = {
       id: `c_${Date.now()}`,
       author: currentUser.name,
-      role: currentUser.role,
       text: text,
       timestamp: 'Just now'
     };
 
     setOkrs(prevOkrs => prevOkrs.map(okr => {
       if (okr.id === okrId) {
-        return { ...okr, comments: [...okr.comments, newComment] };
+        const updated = { ...okr, comments: [...okr.comments, newComment] };
+        if (selectedFlowOkr?.id === okrId) setSelectedFlowOkr(updated);
+        return updated;
       }
       return okr;
     }));
@@ -210,294 +285,416 @@ export default function OKRTrackingEngine({ currentUser = { id: 1, name: 'Dr. Ar
     setCommentInputs(prev => ({ ...prev, [okrId]: '' }));
   };
 
-  // --- UI HELPERS ---
-  const getStatusProps = (status) => {
-    switch(status) { 
-      case 'On Track': return { color: 'success', icon: <CheckCircle fontSize="small" /> }; 
-      case 'At Risk': return { color: 'warning', icon: <WarningAmber fontSize="small" /> }; 
-      case 'Behind': return { color: 'error', icon: <Flag fontSize="small" /> }; 
-      default: return { color: 'primary', icon: null }; 
-    }
+  const getBarColor = (progress) => {
+    if (progress >= 75) return '#22C55E';
+    if (progress >= 40) return '#EAB308';
+    return '#EF4444';
   };
-
-  const getLevelProps = (level) => {
-    switch(level) {
-      case 'Company': return { color: 'company', icon: <Domain fontSize="small" sx={{ mr: 0.5 }} /> };
-      case 'Team': return { color: 'team', icon: <Groups fontSize="small" sx={{ mr: 0.5 }} /> };
-      case 'Individual': return { color: 'individual', icon: <Person fontSize="small" sx={{ mr: 0.5 }} /> };
-      default: return { color: 'primary', icon: null };
-    }
-  };
-
-  const visibleOkrs = okrs.filter(canViewOkr);
-  const availableLevels = getAvailableCreationLevels();
-  const currentYearProgress = 47; 
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Box sx={{ minHeight: '100vh', p: 4, bgcolor: 'background.default', width: '100%' }}>
         
-        {/* HEADER SECTION */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 5, maxWidth: 1000, mx: 'auto' }}>
+        {/* HEADER & SWITCHERS */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, maxWidth: 1200, mx: 'auto' }}>
           <Box>
-            <Typography variant="h4" letterSpacing="-0.03em" sx={{ mt: 0.5, backgroundColor: '#000000', p: 1, borderRadius: 1, display: 'inline-block' }} style={{ color: '#ffffff', fontWeight: 600 }}>
-              Objectives & Key Results
+            <Typography variant="h5" fontWeight={800} letterSpacing="-0.02em">
+              Organization OKR Alignment
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5, backgroundColor: '#000000', p: 1, borderRadius: 1, display: 'inline-block' }} style={{ color: '#ffffff', fontWeight: 600 }}>
-              Track strategic goals and measurable outcomes.
+            <Typography variant="body2" color="text.secondary">
+              Delegation chain mapping for {currentUser.department} & active teams
             </Typography>
           </Box>
-          
+
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-            <IconButton onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')} sx={{ bgcolor: 'background.paper' }}>
+            {/* USER SIMULATOR SELECTOR */}
+            <FormControl size="small" sx={{ minWidth: 200, bgcolor: 'background.paper', borderRadius: 2 }}>
+              <InputLabel id="user-select-label"><PersonPin fontSize="small" /> Active User</InputLabel>
+              <Select
+                labelId="user-select-label"
+                value={currentUser.id}
+                label="Active User"
+                onChange={(e) => setCurrentUser(directoryUsers.find(u => u.id === e.target.value))}
+              >
+                {directoryUsers.map(u => (
+                  <MenuItem key={u.id} value={u.id}>
+                    {u.name} ({u.role})
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <Paper elevation={0} sx={{ border: `1px solid ${mode === 'dark' ? '#2A2D3A' : '#CBD5E1'}`, borderRadius: 2, p: 0.5, bgcolor: 'background.paper' }}>
+              <ToggleButtonGroup
+                value={viewMode}
+                exclusive
+                onChange={(e, val) => val && setViewMode(val)}
+                size="small"
+              >
+                <ToggleButton value="flow" sx={{ textTransform: 'none', px: 2, gap: 1, fontWeight: 700 }}>
+                  <AccountTree fontSize="small" /> Flowchart Tree
+                </ToggleButton>
+                <ToggleButton value="list" sx={{ textTransform: 'none', px: 2, gap: 1, fontWeight: 700 }}>
+                  <ViewList fontSize="small" /> List View
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Paper>
+
+            <IconButton onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')} sx={{ bgcolor: 'background.paper', border: `1px solid ${mode === 'dark' ? '#2A2D3A' : '#CBD5E1'}` }}>
               {mode === 'dark' ? <LightMode color="warning" /> : <DarkMode color="primary" />}
             </IconButton>
-            
-            {availableLevels.length > 0 && (
-              <Button variant="contained" startIcon={<Add />} onClick={handleOpenDraft} size="large" sx={{ borderRadius: 2}} style={{ color: '#000000', fontWeight: 600 }}>
-                Draft New OKR
-              </Button>
-            )}
+
+            <Button variant="contained" startIcon={<Add />} onClick={() => setCreateModalOpen(true)} sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 700 }}>
+              Draft & Assign OKR
+            </Button>
           </Box>
         </Box>
 
-        {/* FISCAL YEAR TIMELINE */}
-        <Card 
-          elevation={0} 
-          sx={{ 
-            maxWidth: 1000, mx: 'auto', mb: 4, p: 3, 
-            bgcolor: '#373e42', borderRadius: 3, 
-            border: mode === 'dark' ? '1px solid #2A2D3A' : '1px solid #E2E8F0' 
-          }}
-        >
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2}}>
-            <Typography variant="subtitle2" fontWeight={700} style={{ color: '#ffffff', fontWeight: 600 }}>
-              2026 FISCAL / ACADEMIC YEAR
-            </Typography>
-            <Typography variant="subtitle2" fontWeight={700} style={{ color: '#ffffff', fontWeight: 600 }}>
-              Q2 ({currentYearProgress}% Complete)
-            </Typography>
-          </Box>
-          
-          <Box sx={{ position: 'relative', width: '100%', height: 32, bgcolor: mode === 'dark' ? '#22252E' : '#EDF2F7', borderRadius: 2, display: 'flex', overflow: 'visible', mt: 3 }}>
-            <Box sx={{ position: 'absolute', top: 0, left: 0, height: '100%', width: `${currentYearProgress}%`, bgcolor: '#0c7a65', opacity: 1.00, borderRadius: '8px 0 0 8px' }} />
-            <Box sx={{ position: 'absolute', top: -10, bottom: -10, left: `${currentYearProgress}%`, width: 2, bgcolor: 'primary.main', zIndex: 10 }}>
-              <Box sx={{ position: 'absolute', top: -22, left: '50%', transform: 'translateX(-50%)', bgcolor: '#02d2f2', color: mode === 'dark' ? '#000' : '#FFF', fontSize: '0.65rem', px: 1, py: 0.2, borderRadius: 1, fontWeight: 800, whiteSpace: 'nowrap' }}>
-                TODAY
-              </Box>
-            </Box>
+        {/* --- FLOWCHART CANVAS VIEW --- */}
+        {viewMode === 'flow' && (
+          <Box sx={{ maxWidth: 1200, mx: 'auto', py: 2 }}>
+            {assignorGroups.map((group, gIndex) => (
+              <Box key={gIndex} sx={{ position: 'relative', display: 'flex', alignItems: 'center', mb: 6 }}>
+                
+                {/* LEFT NODE: ASSIGNOR CARD */}
+                <Card
+                  elevation={2}
+                  sx={{
+                    width: 290,
+                    p: 2,
+                    bgcolor: 'background.paper',
+                    borderRadius: 3,
+                    border: '2px solid #4ECDC4',
+                    flexShrink: 0,
+                    zIndex: 2,
+                    boxShadow: mode === 'dark' ? '0 4px 20px rgba(0,0,0,0.5)' : '0 4px 12px rgba(0,0,0,0.05)'
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.5 }}>
+                    <Avatar sx={{ width: 46, height: 46, bgcolor: 'secondary.main', color: '#FFF', fontWeight: 800 }}>
+                      {group.initial}
+                    </Avatar>
+                    <Box>
+                      <Typography variant="subtitle1" fontWeight={800} sx={{ lineHeight: 1.2 }}>
+                        {group.assignorName}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                        {group.assignorRole} &bull; {group.okrs.length} OKRs Delegated
+                      </Typography>
+                    </Box>
+                  </Box>
 
-            <Box sx={{ flex: 1, borderRight: `1px dashed ${mode === 'dark' ? '#3A3D4A' : '#CBD5E1'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 5 }}><Typography variant="caption" fontWeight={700} color="text.secondary">Q1</Typography></Box>
-            <Box sx={{ flex: 1, borderRight: `1px dashed ${mode === 'dark' ? '#3A3D4A' : '#CBD5E1'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 5 }}><Typography variant="caption" fontWeight={800} color="text.primary">Q2</Typography></Box>
-            <Box sx={{ flex: 1, borderRight: `1px dashed ${mode === 'dark' ? '#3A3D4A' : '#CBD5E1'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 5 }}><Typography variant="caption" fontWeight={700} color="text.secondary">Q3</Typography></Box>
-            <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 5 }}><Typography variant="caption" fontWeight={700} color="text.secondary">Q4</Typography></Box>
-          </Box>
-        </Card>
+                  {/* AVERAGE PROGRESS */}
+                  <Box sx={{ position: 'relative', height: 20, bgcolor: mode === 'dark' ? '#2A2D3A' : '#E2E8F0', borderRadius: 2, overflow: 'hidden' }}>
+                    <Box 
+                      sx={{ 
+                        height: '100%', 
+                        width: `${group.avgProgress}%`, 
+                        bgcolor: getBarColor(group.avgProgress), 
+                        transition: 'width 0.5s ease'
+                      }}
+                    />
+                    <Typography 
+                      variant="caption" 
+                      fontWeight={900} 
+                      sx={{ 
+                        position: 'absolute', 
+                        top: '50%', 
+                        left: '50%', 
+                        transform: 'translate(-50%, -50%)', 
+                        color: mode === 'dark' ? '#FFF' : '#000',
+                        fontSize: '0.7rem'
+                      }}
+                    >
+                      {group.avgProgress}% Avg
+                    </Typography>
+                  </Box>
+                </Card>
 
-        {/* OKR ACCORDION LIST */}
-        <Box sx={{ maxWidth: 1000, mx: 'auto' }}>
-          {visibleOkrs.length === 0 && (
-            <Typography variant="body1" color="text.secondary" textAlign="center" mt={10}>
-              No OKRs available to view.
-            </Typography>
-          )}
+                {/* SVG CONNECTOR LINES */}
+                <Box sx={{ width: 80, flexShrink: 0, position: 'relative', alignSelf: 'stretch', display: 'flex', alignItems: 'center' }}>
+                  <svg style={{ width: '100%', height: '100%', position: 'absolute', overflow: 'visible' }}>
+                    {group.okrs.map((_, i) => {
+                      const total = group.okrs.length;
+                      const endY = total === 1 ? '50%' : `${((i / (total - 1)) * 80) + 10}%`;
+                      return (
+                        <path
+                          key={i}
+                          d={`M 0,50% C 40,50% 40,${endY} 80,${endY}`}
+                          fill="none"
+                          stroke={mode === 'dark' ? '#475569' : '#94A3B8'}
+                          strokeWidth="2.5"
+                        />
+                      );
+                    })}
+                  </svg>
+                </Box>
 
-          {visibleOkrs.map((okr) => {
-            const hasEditPermission = canEditOkr(okr);
-            const hasCommentPermission = canCommentOnOkr(okr);
-            const levelProps = getLevelProps(okr.level);
-            const statusProps = getStatusProps(okr.status);
+                {/* RIGHT NODES: ASSIGNED OBJECTIVES */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, flexGrow: 1 }}>
+                  {group.okrs.map((okr) => {
+                    const assigneeUser = directoryUsers.find(u => u.name === okr.ownerName);
+                    return (
+                      <Card
+                        key={okr.id}
+                        elevation={1}
+                        onClick={() => setSelectedFlowOkr(okr)}
+                        sx={{
+                          p: 2.5,
+                          pb: 0,
+                          bgcolor: 'background.paper',
+                          borderRadius: 3,
+                          border: `1px solid ${mode === 'dark' ? '#2A2D3A' : '#E2E8F0'}`,
+                          cursor: 'pointer',
+                          overflow: 'hidden',
+                          transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+                          '&:hover': {
+                            transform: 'translateY(-2px)',
+                            boxShadow: '0 8px 24px rgba(0,0,0,0.2)'
+                          }
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                          <Typography variant="h6" fontWeight={800} sx={{ fontSize: '1.05rem', lineHeight: 1.3, pr: 2 }}>
+                            {okr.title}
+                          </Typography>
+                          <IconButton size="small"><OpenInNew fontSize="inherit" /></IconButton>
+                        </Box>
 
-            return (
-              <Accordion key={okr.id} disableGutters>
-                {/* --- HEADER VISIBLE PORTION --- */}
-                <AccordionSummary expandIcon={<ExpandMore />} sx={{ p: 3 }}>
-                  <Grid container alignItems="center" spacing={3}>
-                    <Grid item xs={12} md={5}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-                        <Chip label={okr.level.toUpperCase()} size="small" color={levelProps.color} sx={{ fontWeight: 800, fontSize: '0.65rem', height: 20 }} />
-                        {!hasEditPermission && (
-                          <Tooltip title="You do not have permission to edit this OKR">
-                            <Lock fontSize="small" color="action" />
-                          </Tooltip>
-                        )}
-                        {okr.comments.length > 0 && (
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.secondary' }}>
-                            <Forum fontSize="inherit" />
-                            <Typography variant="caption" fontWeight={700}>{okr.comments.length}</Typography>
+                        {/* ASSIGNEE & METADATA */}
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2, mb: 2 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            <Tooltip title={`Assigned to ${okr.ownerName} (${okr.department})`}>
+                              <AvatarGroup max={2}>
+                                <Avatar sx={{ width: 28, height: 28, bgcolor: 'primary.main', color: '#000', fontSize: '0.75rem', fontWeight: 800 }}>
+                                  {assigneeUser?.initial || okr.ownerName.charAt(0)}
+                                </Avatar>
+                              </AvatarGroup>
+                            </Tooltip>
+                            <Chip label={okr.ownerName} size="small" sx={{ fontWeight: 700 }} />
+                            <Chip label={okr.department} size="small" variant="outlined" sx={{ fontWeight: 600 }} />
                           </Box>
-                        )}
-                      </Box>
-                      <Typography variant="h6" fontWeight={700} sx={{ lineHeight: 1.3 }}>{okr.title}</Typography>
-                    </Grid>
-                    
-                    <Grid item xs={6} md={3}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                        <Avatar sx={{ width: 32, height: 32, bgcolor: `${levelProps.color}.main`, fontSize: '0.9rem', fontWeight: 'bold', color: '#fff' }}>
-                          {okr.ownerName.charAt(0)}
-                        </Avatar>
-                        <Box>
-                          <Typography variant="body2" fontWeight={600} color="text.primary">{okr.ownerName}</Typography>
-                          <Typography variant="caption" color="text.secondary">{okr.department}</Typography>
-                        </Box>
-                      </Box>
-                    </Grid>
 
-                    <Grid item xs={6} md={4}>
-                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <Chip icon={statusProps.icon} label={okr.status} color={statusProps.color} size="small" variant={mode === 'dark' ? 'outlined' : 'filled'} sx={{ fontWeight: 600, border: mode === 'dark' ? 'none' : undefined, bgcolor: mode === 'dark' ? `${theme.palette[statusProps.color].main}20` : undefined }} />
-                          <Typography variant="h6" fontWeight={800}>{okr.progress}%</Typography>
+                          <Typography variant="caption" color="text.secondary" fontWeight={700}>
+                            {okr.keyResults.length} KRs &bull; {okr.tasksCount} Tasks
+                          </Typography>
                         </Box>
-                        <LinearProgress variant="determinate" value={okr.progress} color={statusProps.color} sx={{ height: 8, borderRadius: 4, bgcolor: mode === 'dark' ? '#2A2D3A' : '#E2E8F0' }} />
-                      </Box>
+
+                        {/* BOTTOM PROGRESS BAR */}
+                        <Box sx={{ position: 'relative', height: 22, mx: -2.5, bgcolor: mode === 'dark' ? '#2A2D3A' : '#E2E8F0', overflow: 'hidden' }}>
+                          <Box 
+                            sx={{ 
+                              height: '100%', 
+                              width: `${okr.progress}%`, 
+                              bgcolor: getBarColor(okr.progress)
+                            }}
+                          />
+                          <Typography 
+                            variant="caption" 
+                            fontWeight={900} 
+                            sx={{ 
+                              position: 'absolute', 
+                              top: '50%', 
+                              left: 12, 
+                              transform: 'translateY(-50%)', 
+                              color: mode === 'dark' ? '#FFF' : '#000',
+                              fontSize: '0.75rem'
+                            }}
+                          >
+                            *{okr.progress}%
+                          </Typography>
+                        </Box>
+                      </Card>
+                    );
+                  })}
+                </Box>
+
+              </Box>
+            ))}
+          </Box>
+        )}
+
+        {/* --- LIST VIEW --- */}
+        {viewMode === 'list' && (
+          <Box sx={{ maxWidth: 1000, mx: 'auto' }}>
+            {okrs.map((okr) => (
+              <Accordion key={okr.id} sx={{ mb: 2, borderRadius: '12px !important', overflow: 'hidden' }}>
+                <AccordionSummary expandIcon={<ExpandMore />} sx={{ p: 2.5 }}>
+                  <Grid container alignItems="center" spacing={2}>
+                    <Grid item xs={12} md={6}>
+                      <Typography variant="subtitle1" fontWeight={800}>{okr.title}</Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Assigned by {okr.assignedBy} &rarr; <strong>{okr.ownerName}</strong> ({okr.department})
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={3}>
+                      <Chip label={okr.status} color={okr.progress >= 75 ? 'success' : 'warning'} size="small" />
+                    </Grid>
+                    <Grid item xs={6} md={3}>
+                      <Typography variant="body2" fontWeight={800}>{okr.progress}% Complete</Typography>
+                      <LinearProgress variant="determinate" value={okr.progress} sx={{ height: 6, borderRadius: 3, mt: 0.5 }} />
                     </Grid>
                   </Grid>
                 </AccordionSummary>
-
-                {/* --- EXPANDED DETAILS & COMMENTS --- */}
-                <AccordionDetails sx={{ px: 3, pb: 3, pt: 0 }}>
-                  <Divider sx={{ mb: 3, borderColor: mode === 'dark' ? '#2A2D3A' : '#E2E8F0' }} />
-                  
-                  {/* KEY RESULTS */}
-                  <Typography variant="subtitle2" color="text.secondary" fontWeight={700} sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <TrackChanges fontSize="small" /> KEY RESULTS
-                  </Typography>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-                    {okr.keyResults.map((kr) => {
-                      const krProgress = Math.round((kr.current / kr.target) * 100);
-                      return (
-                        <Box key={kr.id} sx={{ display: 'grid', gridTemplateColumns: '1fr 200px', gap: 3, alignItems: 'center' }}>
-                          <Typography variant="body1" fontWeight={500}>{kr.title}</Typography>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Box sx={{ flexGrow: 1 }}>
-                              <LinearProgress variant="determinate" value={krProgress} color="primary" sx={{ height: 6, borderRadius: 3, bgcolor: mode === 'dark' ? '#22252E' : '#EDF2F7' }} />
-                            </Box>
-                            <Typography variant="body2" fontWeight={600} sx={{ minWidth: 60, textAlign: 'right' }}>
-                              {kr.current} / {kr.target} {kr.unit !== '%' && <Box component="span" sx={{ color: 'text.secondary', fontWeight: 400 }}>{kr.unit}</Box>}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      );
-                    })}
-                  </Box>
-                  {hasEditPermission && (
-                    <Button size="small" startIcon={<Add />} sx={{ mt: 3, mb: 1, textTransform: 'none' }}>Add Key Result</Button>
-                  )}
-
-                  {/* COMMENTS SECTION */}
-                  <Box sx={{ mt: 4, bgcolor: mode === 'dark' ? '#14151f' : '#F8FAFC', borderRadius: 2, p: 2, border: `1px solid ${mode === 'dark' ? '#2A2D3A' : '#E2E8F0'}` }}>
-                    <Typography variant="subtitle2" color="text.secondary" fontWeight={700} sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Forum fontSize="small" /> FEEDBACK & COMMENTS
-                    </Typography>
-                    
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: hasCommentPermission ? 3 : 0 }}>
-                      {okr.comments.length === 0 && (
-                        <Typography variant="body2" color="text.secondary" fontStyle="italic">No comments yet.</Typography>
-                      )}
-                      {okr.comments.map((comment) => (
-                        <Box key={comment.id} sx={{ display: 'flex', gap: 2 }}>
-                          <Avatar sx={{ width: 28, height: 28, fontSize: '0.75rem', bgcolor: comment.role === 'Executive' ? 'secondary.main' : comment.role === 'Manager' ? 'primary.main' : 'grey.600' }}>
-                            {comment.author.charAt(0)}
-                          </Avatar>
-                          <Box sx={{ flexGrow: 1, bgcolor: mode === 'dark' ? '#22252E' : '#FFFFFF', p: 1.5, borderRadius: 2, border: `1px solid ${mode === 'dark' ? '#2A2D3A' : '#E2E8F0'}` }}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography variant="caption" fontWeight={700} color="text.primary">{comment.author}</Typography>
-                                <Typography variant="caption" color="text.secondary">({comment.role})</Typography>
-                              </Box>
-                              <Typography variant="caption" color="text.secondary">{comment.timestamp}</Typography>
-                            </Box>
-                            <Typography variant="body2">{comment.text}</Typography>
-                          </Box>
-                        </Box>
-                      ))}
-                    </Box>
-
-                    {/* NEW COMMENT INPUT */}
-                    {hasCommentPermission && (
-                      <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                        <Avatar sx={{ width: 28, height: 28, fontSize: '0.75rem', bgcolor: currentUser.role === 'Executive' ? 'secondary.main' : currentUser.role === 'Manager' ? 'primary.main' : 'grey.600' }}>
-                          {currentUser.name.charAt(0)}
-                        </Avatar>
-                        <TextField 
-                          size="small"
-                          fullWidth
-                          placeholder="Provide feedback..."
-                          value={commentInputs[okr.id] || ''}
-                          onChange={(e) => setCommentInputs(prev => ({ ...prev, [okr.id]: e.target.value }))}
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              e.preventDefault();
-                              handlePostComment(okr.id);
-                            }
-                          }}
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">
-                                <IconButton color="primary" edge="end" onClick={() => handlePostComment(okr.id)} disabled={!commentInputs[okr.id]?.trim()}>
-                                  <Send fontSize="small" />
-                                </IconButton>
-                              </InputAdornment>
-                            ),
-                            sx: { bgcolor: mode === 'dark' ? '#1A1D24' : '#FFFFFF' }
-                          }}
-                        />
-                      </Box>
-                    )}
-                  </Box>
-
+                <AccordionDetails sx={{ borderTop: `1px solid ${mode === 'dark' ? '#2A2D3A' : '#E2E8F0'}`, p: 3 }}>
+                  <OkrDetailContent 
+                    okr={okr} 
+                    mode={mode} 
+                    commentInputs={commentInputs}
+                    setCommentInputs={setCommentInputs}
+                    handlePostComment={handlePostComment}
+                  />
                 </AccordionDetails>
               </Accordion>
-            );
-          })}
-        </Box>
+            ))}
+          </Box>
+        )}
 
-        {/* OKR CREATION MODAL */}
+        {/* INSPECTOR DIALOG */}
+        <Dialog open={Boolean(selectedFlowOkr)} onClose={() => setSelectedFlowOkr(null)} maxWidth="md" fullWidth PaperProps={{ sx: { bgcolor: 'background.paper', borderRadius: 3 } }}>
+          {selectedFlowOkr && (
+            <>
+              <DialogTitle sx={{ fontWeight: 800, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box sx={{ pr: 2 }}>{selectedFlowOkr.title}</Box>
+                <Chip label={`${selectedFlowOkr.progress}%`} color={selectedFlowOkr.progress >= 75 ? 'success' : 'warning'} size="small" sx={{ fontWeight: 800 }} />
+              </DialogTitle>
+              <DialogContent dividers>
+                <OkrDetailContent 
+                  okr={selectedFlowOkr} 
+                  mode={mode} 
+                  commentInputs={commentInputs}
+                  setCommentInputs={setCommentInputs}
+                  handlePostComment={handlePostComment}
+                />
+              </DialogContent>
+              <DialogActions sx={{ p: 2 }}>
+                <Button onClick={() => setSelectedFlowOkr(null)} variant="outlined">Close</Button>
+              </DialogActions>
+            </>
+          )}
+        </Dialog>
+
+        {/* DRAFT & ASSIGN MODAL */}
         <Dialog open={createModalOpen} onClose={() => setCreateModalOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { bgcolor: 'background.paper', borderRadius: 3 } }}>
-          <DialogTitle sx={{ fontWeight: 700, pb: 1 }}>Draft New Objective</DialogTitle>
+          <DialogTitle sx={{ fontWeight: 800 }}>Draft & Assign Objective</DialogTitle>
           <DialogContent>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              Define a high-level qualitative goal based on your access permissions.
-            </Typography>
-            
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 1 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
               <TextField 
-                select 
-                label="OKR Level" 
-                value={draftLevel}
-                onChange={(e) => setDraftLevel(e.target.value)}
+                label="Objective Title" 
                 fullWidth 
-                helperText="Your role determines which level of OKR you can create."
-              >
-                {availableLevels.map((lvl) => (
-                  <MenuItem key={lvl} value={lvl}>{lvl} Objective</MenuItem>
-                ))}
-              </TextField>
-
-              <TextField label="Objective Title" placeholder="e.g., Increase platform adoption" fullWidth variant="outlined" />
-              
+                value={newOkr.title}
+                onChange={(e) => setNewOkr({ ...newOkr, title: e.target.value })}
+              />
+              <TextField 
+                label="Description of Work" 
+                multiline
+                rows={3}
+                fullWidth 
+                value={newOkr.description}
+                onChange={(e) => setNewOkr({ ...newOkr, description: e.target.value })}
+              />
               <Grid container spacing={2}>
                 <Grid item xs={6}>
-                  <TextField select label="Timeframe" fullWidth SelectProps={{ native: true }}>
-                    <option value="q1">Q1 2026</option>
-                    <option value="q2">Q2 2026</option>
+                  <TextField 
+                    select 
+                    label="Assignee (Got Assigned)" 
+                    fullWidth 
+                    value={newOkr.assignedToId}
+                    onChange={(e) => setNewOkr({ ...newOkr, assignedToId: e.target.value })}
+                  >
+                    {directoryUsers.filter(u => u.id !== currentUser.id).map(u => (
+                      <MenuItem key={u.id} value={u.id}>{u.name} ({u.department})</MenuItem>
+                    ))}
                   </TextField>
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField label="Assignee / Owner" disabled={draftLevel === 'Company' || draftLevel === 'Team'} defaultValue={draftLevel === 'Individual' ? currentUser.name : currentUser.department} fullWidth />
+                  <TextField 
+                    label="Assignor (Assigned By)" 
+                    disabled 
+                    value={currentUser.name} 
+                    fullWidth 
+                  />
                 </Grid>
               </Grid>
             </Box>
           </DialogContent>
-          <DialogActions sx={{ p: 3, pt: 2 }}>
-            <Button onClick={() => setCreateModalOpen(false)} color="inherit">Cancel</Button>
-            <Button variant="contained" onClick={() => setCreateModalOpen(false)}>Save & Continue</Button>
+          <DialogActions sx={{ p: 2.5 }}>
+            <Button onClick={() => setCreateModalOpen(false)}>Cancel</Button>
+            <Button variant="contained" onClick={handleCreateOkr}>Assign OKR</Button>
           </DialogActions>
         </Dialog>
 
       </Box>
     </ThemeProvider>
+  );
+}
+
+// --- DETAIL CONTENT ---
+function OkrDetailContent({ okr, mode, commentInputs, setCommentInputs, handlePostComment }) {
+  return (
+    <>
+      <Grid container spacing={2} sx={{ mb: 3 }}>
+        <Grid item xs={12} sm={6}>
+          <Card variant="outlined" sx={{ p: 2, bgcolor: mode === 'dark' ? '#14151f' : '#F8FAFC' }}>
+            <Typography variant="caption" color="text.secondary" display="block">ASSIGNMENT DELEGATION</Typography>
+            <Typography variant="body2" fontWeight={700}>
+              {okr.assignedBy} <Box component="span" sx={{ color: 'text.secondary', fontWeight: 400 }}>assigned to</Box> {okr.ownerName}
+            </Typography>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Card variant="outlined" sx={{ p: 2, bgcolor: mode === 'dark' ? '#14151f' : '#F8FAFC' }}>
+            <Typography variant="caption" color="text.secondary" display="block">DEPARTMENT & SCHEDULE</Typography>
+            <Typography variant="body2" fontWeight={700}>
+              {okr.department} &bull; Due {okr.dueDate}
+            </Typography>
+          </Card>
+        </Grid>
+      </Grid>
+
+      <Typography variant="subtitle2" color="text.secondary" fontWeight={800} sx={{ mb: 1 }}>
+        DESCRIPTION OF WORK
+      </Typography>
+      <Typography variant="body2" sx={{ mb: 3, lineHeight: 1.6 }}>
+        {okr.description}
+      </Typography>
+
+      <Typography variant="subtitle2" color="text.secondary" fontWeight={800} sx={{ mb: 1 }}>
+        KEY RESULTS
+      </Typography>
+      {okr.keyResults.map((kr) => (
+        <Box key={kr.id} sx={{ mb: 1.5 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+            <Typography variant="body2" fontWeight={600}>{kr.title}</Typography>
+            <Typography variant="body2" fontWeight={700}>{kr.current} / {kr.target} {kr.unit}</Typography>
+          </Box>
+          <LinearProgress variant="determinate" value={(kr.current / kr.target) * 100} sx={{ height: 6, borderRadius: 3 }} />
+        </Box>
+      ))}
+
+      {/* FEEDBACK THREAD */}
+      <Box sx={{ mt: 3, p: 2, bgcolor: mode === 'dark' ? '#14151f' : '#F8FAFC', borderRadius: 2 }}>
+        <Typography variant="subtitle2" fontWeight={800} sx={{ mb: 2 }}>
+          Feedback & Directives
+        </Typography>
+        {okr.comments.map((comment) => (
+          <Box key={comment.id} sx={{ mb: 1.5, p: 1.5, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid #E2E8F0' }}>
+            <Typography variant="caption" fontWeight={700}>{comment.author}: </Typography>
+            <Typography variant="body2" component="span">{comment.text}</Typography>
+          </Box>
+        ))}
+        <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+          <TextField 
+            size="small" 
+            fullWidth 
+            placeholder="Add feedback..." 
+            value={commentInputs[okr.id] || ''}
+            onChange={(e) => setCommentInputs(prev => ({ ...prev, [okr.id]: e.target.value }))}
+          />
+          <IconButton color="primary" onClick={() => handlePostComment(okr.id)}><Send fontSize="small" /></IconButton>
+        </Box>
+      </Box>
+    </>
   );
 }
