@@ -51,18 +51,6 @@ export default function App() {
           </Box>
 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, flexGrow: 1 }}>
-            <Tooltip title="OKR Command Center" placement="right">
-              <IconButton 
-                onClick={() => setActiveView('tracking')}
-                sx={{ 
-                  color: activeView === 'tracking' ? 'primary.main' : '#8B92A5',
-                  bgcolor: activeView === 'tracking' ? 'rgba(78, 205, 196, 0.15)' : 'transparent',
-                  borderRadius: 3, '&:hover': { bgcolor: 'rgba(78, 205, 196, 0.1)' }
-                }}
-              >
-                <TrackChanges sx={{ fontSize: 28 }} />
-              </IconButton>
-            </Tooltip>
 
             {/* UNLOCKED ROUTE: Everyone can now click this button */}
             <Tooltip title="Organization Directory" placement="right">
@@ -75,6 +63,19 @@ export default function App() {
                 }}
               >
                 <PeopleAlt sx={{ fontSize: 28 }} />
+              </IconButton>
+            </Tooltip>
+            
+            <Tooltip title="OKR Command Center" placement="right">
+              <IconButton 
+                onClick={() => setActiveView('tracking')}
+                sx={{ 
+                  color: activeView === 'tracking' ? 'primary.main' : '#8B92A5',
+                  bgcolor: activeView === 'tracking' ? 'rgba(78, 205, 196, 0.15)' : 'transparent',
+                  borderRadius: 3, '&:hover': { bgcolor: 'rgba(78, 205, 196, 0.1)' }
+                }}
+              >
+                <TrackChanges sx={{ fontSize: 28 }} />
               </IconButton>
             </Tooltip>
 
