@@ -4,6 +4,7 @@ import { PeopleAlt, TrackChanges, SpaceDashboard, Settings, Logout } from '@mui/
 
 import OKRUserManagement from './pages/module1.jsx';
 import OKRTrackingEngine from './pages/module2.jsx';
+import SettingsPage from './pages/setting.jsx';
 import LoginScreen from './pages/login.jsx';
 
 export default function App() {
@@ -65,7 +66,7 @@ export default function App() {
                 <PeopleAlt sx={{ fontSize: 28 }} />
               </IconButton>
             </Tooltip>
-            
+
             <Tooltip title="OKR Command Center" placement="right">
               <IconButton 
                 onClick={() => setActiveView('tracking')}
@@ -86,9 +87,18 @@ export default function App() {
             </Tooltip>
           </Box>
 
-          <IconButton sx={{ color: '#8B92A5', mb: 2 }}>
-            <Settings sx={{ fontSize: 28 }} />
-          </IconButton>
+          <Tooltip title="Settings" placement="right">
+            <IconButton
+              onClick={() => setActiveView("settings")}
+              sx={{
+                color: activeView === "settings" ? "primary.main" : "#8B92A5",
+                bgcolor: activeView === "settings" ? "rgba(78,205,196,0.15)" : "transparent",
+                borderRadius: 3, "&:hover": { bgcolor: "rgba(78,205,196,0.1)"}
+              }}
+            >
+              <Settings sx={{ fontSize: 28 }} />
+            </IconButton>
+          </Tooltip>
 
           <Tooltip title={`Logged in as ${currentUser.name}`} placement="right">
             <Avatar sx={{ width: 36, height: 36, bgcolor: '#3A3D4A', fontSize: '0.9rem', mb: 2, cursor: 'pointer' }}>
@@ -107,6 +117,7 @@ export default function App() {
           {/* We now pass currentUser to both modules */}
           {activeView === 'users' && <OKRUserManagement currentUser={currentUser} />}
           {activeView === 'tracking' && <OKRTrackingEngine currentUser={currentUser} />}
+          {activeView === 'settings' && <SettingsPage currentUser={currentUser} />}
         </Box>
 
       </Box>
