@@ -49,7 +49,7 @@ import {
 const predefinedDepartments = [
   'Engineering Hub',
   'Policy Strategy',
-  'Phak Phrom Soep',
+  'Marketing',
   'Media & PR',
   'Student Affairs'
 ];
@@ -63,7 +63,7 @@ const mockManagers = [
 const initialUsers = [
   { id: 1, name: 'Dr. Arisara (Advisor)', email: 'arisara@school.edu', role: 'Executive', department: 'Policy Strategy', manager: 'Board' },
   { id: 2, name: 'Lead Engineer', email: 'lead.eng@school.edu', role: 'Manager', department: 'Engineering Hub', manager: 'Dr. Arisara (Advisor)' },
-  { id: 3, name: 'Campaign Director', email: 'director@school.edu', role: 'Manager', department: 'Phak Phrom Soep', manager: 'Dr. Arisara (Advisor)' },
+  { id: 3, name: 'Campaign Director', email: 'director@school.edu', role: 'Manager', department: 'Marketing', manager: 'Dr. Arisara (Advisor)' },
   { id: 4, name: 'LMS Developer', email: 'dev.lms@school.edu', role: 'Employee', department: 'Engineering Hub', manager: 'Lead Engineer' },
   { id: 5, name: 'AI Media Artist', email: 'ai.artist@school.edu', role: 'Employee', department: 'Media & PR', manager: 'Campaign Director' },
   { id: 6, name: 'Policy Drafter', email: 'policy@school.edu', role: 'Employee', department: 'Policy Strategy', manager: 'Dr. Arisara (Advisor)' },
