@@ -197,7 +197,7 @@ export default function OKRUserManagement({ currentUser = { role: 'Employee' } }
                   <TableCell sx={{ fontWeight: 600 }}>Corporate Email</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Role Tier</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Department</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Direct Report</TableCell>
+                  
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -209,7 +209,6 @@ export default function OKRUserManagement({ currentUser = { role: 'Employee' } }
                       <Chip label={user.role} size="small" sx={{ bgcolor: user.role === 'Executive' ? 'secondary.main' : user.role === 'Manager' ? 'primary.main' : mode === 'dark' ? '#333' : '#e0e0e0', color: user.role === 'Employee' ? 'text.primary' : '#fff', fontWeight: 600 }} />
                     </TableCell>
                     <TableCell>{user.department}</TableCell>
-                    <TableCell>{user.manager}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
