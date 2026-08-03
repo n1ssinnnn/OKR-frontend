@@ -138,10 +138,10 @@ export default function OKRUserManagement({ currentUser = { role: 'Employee' } }
         {/* HEADER */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box>
-            <Typography variant="h4" letterSpacing="-0.03em" sx={{ mt: 0.5, p: 1, borderRadius: 1, display: 'inline-block' }} style={{ color: '#ffffff', fontWeight: 600 }}>
+            <Typography variant="h4" letterSpacing="-0.03em" sx={{ mt: 0.5, p: 1, borderRadius: 1, display: 'inline-block', fontweight: 600, color: mode === 'dark' ? '#ffffff' : '#000000' }} >
               Organization Directory
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5, p: 1, borderRadius: 1, display: 'inline-block' }} style={{ color: '#ffffff', fontWeight: 600 }}>
+            <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5, p: 1, borderRadius: 1, display: 'inline-block', fontweight: 600, color: mode === 'dark' ? '#ffffff' : '#000000' }} >
               {canManageUsers ? 'Manage internal access and view RBAC alignments' : 'View organizational structure and team alignments'}
             </Typography>
           </Box>
