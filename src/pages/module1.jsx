@@ -61,12 +61,12 @@ const mockManagers = [
 ];
 
 const initialUsers = [
-  { id: 1, name: 'Dr. Arisara (Advisor)', email: 'arisara@school.edu', role: 'Executive', department: 'Policy Strategy', manager: 'Board' },
-  { id: 2, name: 'Lead Engineer', email: 'lead.eng@school.edu', role: 'Manager', department: 'Engineering Hub', manager: 'Dr. Arisara (Advisor)' },
-  { id: 3, name: 'Campaign Director', email: 'director@school.edu', role: 'Manager', department: 'Marketing', manager: 'Dr. Arisara (Advisor)' },
-  { id: 4, name: 'LMS Developer', email: 'dev.lms@school.edu', role: 'Employee', department: 'Engineering Hub', manager: 'Lead Engineer' },
-  { id: 5, name: 'AI Media Artist', email: 'ai.artist@school.edu', role: 'Employee', department: 'Media & PR', manager: 'Campaign Director' },
-  { id: 6, name: 'Policy Drafter', email: 'policy@school.edu', role: 'Employee', department: 'Policy Strategy', manager: 'Dr. Arisara (Advisor)' },
+  { id: 1, name: 'Dr. Arisara (Advisor)', email: 'arisara@school.edu', role: 'Executive', department: 'Policy Strategy', managerId: 0 },
+  { id: 2, name: 'Lead Engineer', email: 'lead.eng@school.edu', role: 'Manager', department: 'Engineering Hub', managerId: 1 },
+  { id: 3, name: 'Campaign Director', email: 'director@school.edu', role: 'Manager', department: 'Marketing', managerId: 1 },
+  { id: 4, name: 'LMS Developer', email: 'dev.lms@school.edu', role: 'Employee', department: 'Engineering Hub', managerId: 2 },
+  { id: 5, name: 'AI Media Artist', email: 'ai.artist@school.edu', role: 'Employee', department: 'Media & PR', managerId: 3 },
+  { id: 6, name: 'Policy Drafter', email: 'policy@school.edu', role: 'Employee', department: 'Policy Strategy', managerId: 1 },
 ];
 
 // We accept currentUser as a prop to check permissions!
@@ -128,7 +128,7 @@ export default function OKRUserManagement({ currentUser = { role: 'Employee' } }
   };
 
   const executives = users.filter(u => u.role === 'Executive');
-  const getDirectReports = (managerName) => users.filter(u => u.manager === managerName);
+  const getDirectReports = (managerId) => users.filter(u => u.managerId === managerId);
 
   return (
     <ThemeProvider theme={theme}>
@@ -227,14 +227,14 @@ export default function OKRUserManagement({ currentUser = { role: 'Employee' } }
                   </Box>
                 </Card>
 
-                {getDirectReports(exec.name).length > 0 && <Box sx={{ width: 2, height: 40, bgcolor: 'divider' }} />}
+                {getDirectReports(exec.id).length > 0 && <Box sx={{ width: 2, height: 40, bgcolor: 'divider' }} />}
 
                 <Box sx={{ display: 'flex', gap: 4, position: 'relative' }}>
-                  {getDirectReports(exec.name).length > 1 && <Box sx={{ position: 'absolute', top: 0, left: '25%', right: '25%', height: 2, bgcolor: 'divider' }} />}
+                  {getDirectReports(exec.id).length > 1 && <Box sx={{ position: 'absolute', top: 0, left: '25%', right: '25%', height: 2, bgcolor: 'divider' }} />}
 
-                  {getDirectReports(exec.name).map((manager) => (
+                  {getDirectReports(exec.id).map((manager) => (
                     <Box key={manager.id} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      {getDirectReports(exec.name).length > 1 && <Box sx={{ width: 2, height: 20, bgcolor: 'divider' }} />}
+                      {getDirectReports(exec.id).length > 1 && <Box sx={{ width: 2, height: 20, bgcolor: 'divider' }} />}
                       
                       <Card sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 2, width: 280, border: `1px solid ${theme.palette.primary.main}`, bgcolor: 'background.paper' }}>
                         <Avatar sx={{ bgcolor: 'primary.main' }}>{manager.name.charAt(0)}</Avatar>
@@ -245,9 +245,9 @@ export default function OKRUserManagement({ currentUser = { role: 'Employee' } }
                         </Box>
                       </Card>
 
-                      {getDirectReports(manager.name).length > 0 && (
+                      {getDirectReports(manager.id).length > 0 && (
                         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 2, gap: 1.5, pl: 2, borderLeft: `2px solid ${theme.palette.divider}` }}>
-                          {getDirectReports(manager.name).map((emp) => (
+                          {getDirectReports(manager.id).map((emp) => (
                             <Box key={emp.id} sx={{ display: 'flex', alignItems: 'center', width: 260, position: 'relative' }}>
                               <Box sx={{ width: 16, height: 2, bgcolor: 'divider', mr: 1 }} />
                               <Card sx={{ p: 1.5, display: 'flex', alignItems: 'center', gap: 1.5, flexGrow: 1, bgcolor: mode === 'dark' ? '#22252E' : '#F8FAFC', boxShadow: 'none', border: 1, borderColor: 'divider' }}>
