@@ -49,7 +49,7 @@ import {
 const predefinedDepartments = [
   'Engineering Hub',
   'Policy Strategy',
-  'Phak Phrom Soep',
+  'Marketing',
   'Media & PR',
   'Student Affairs'
 ];
