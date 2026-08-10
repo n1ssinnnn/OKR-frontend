@@ -553,47 +553,18 @@ export default function OKRTrackingEngine() {
                 </Card>
 
                 {/* SVG CONNECTOR LINES */}
-                <Box sx={{ width: 90, flexShrink: 0, position: 'relative', alignSelf: 'stretch', }}>
-                  <svg width="100%" height="100%" viewBox="0 0 90 100" preserveAspectRatio="none" style={{ position: 'absolute', top: 0, left: 0, overflow: 'visible', }}>
-                    <defs>
-                      {/* Arrow head */}
-                      <marker id={`arrow-${gIndex}`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill={mode === 'dark' ? '#475569' : '#94A3B8'} />
-                      </marker>
-                    </defs>
-                    {group.okrs.length > 1 && (
-                      <>
-                        {/* Horizontal line from Assignor to spine */}
-                        <path d="M 0 50 L 35 50" fill="none" stroke={mode === 'dark' ? '#475569' : '#94A3B8'} strokeWidth="2.5"/>
-
-                         {/* Vertical spine */}
-                        <path d={`
-                                M 35 15
-                                L 35 85
-                                `}
-                              fill="none"
-                              stroke={mode === 'dark' ? '#475569' : '#94A3B8'}
-                              strokeWidth="2.5"
-                        />
-                      </>
-                    )}
+                <Box sx={{ width: 80, flexShrink: 0, position: 'relative', alignSelf: 'stretch', display: 'flex', alignItems: 'center' }}>
+                  <svg style={{ width: '100%', height: '100%', position: 'absolute', overflow: 'visible' }}>
                     {group.okrs.map((_, i) => {
                       const total = group.okrs.length;
-
-                      // Position of each branch
-                      const endY = total === 1 ? 50 : 15 + (i / (total - 1)) * 70;
-
+                      const endY = total === 1 ? '50%' : `${((i / (total - 1)) * 80) + 10}%`;
                       return (
-                        <path 
+                        <path
                           key={i}
-                          d={`
-                            M ${total === 1 ? 0 : 35} ${endY}
-                            L 90 ${endY}
-                          `}
+                          d={`M 0,50% C 40,50% 40,${endY} 80,${endY}`}
                           fill="none"
                           stroke={mode === 'dark' ? '#475569' : '#94A3B8'}
                           strokeWidth="2.5"
-                          markerEnd={`url(#arrow-${gIndex})`}
                         />
                       );
                     })}
