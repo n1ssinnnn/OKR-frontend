@@ -538,7 +538,6 @@ export default function OKRTrackingEngine() {
                         boxShadow: isDark ? '0 4px 24px rgba(0,0,0,0.4)' : '0 4px 16px rgba(15,23,42,0.06)',
                       }}
                     >
-<<<<<<< HEAD
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.75, mb: 2 }}>
                         <Avatar sx={{ width: 42, height: 42, bgcolor: 'secondary.main', fontWeight: 800, fontSize: '0.85rem' }}>
                           {group.initial}
@@ -546,14 +545,66 @@ export default function OKRTrackingEngine() {
                         <Box sx={{ minWidth: 0 }}>
                           <Typography noWrap sx={{ fontWeight: 800, fontSize: '0.95rem', lineHeight: 1.25 }}>
                             {group.assignorName}
-=======
-                      {group.avgProgress}% Avg
-                    </Typography>
-                  </Box>
-                </Card>
+                          </Typography>
+                        </Box>
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography sx={{ fontWeight: 600, fontSize: '0.85rem', color: 'text.secondary' }}>
+                          {group.avgProgress}% Avg
+                        </Typography>
+                      </Box>
+                    </Card>
 
                 {/* SVG CONNECTOR LINES */}
-                <Box sx={{ width: 80, flexShrink: 0, position: 'relative', alignSelf: 'stretch', display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ width: 90, flexShrink: 0, position: 'relative', alignSelf: 'stretch', }}>
+                  <svg width="100%" height="100%" viewBox="0 0 90 100" preserveAspectRatio="none" style={{ position: 'absolute', top: 0, left: 0, overflow: 'visible', }}>
+                    <defs>
+                      {/* Arrow head */}
+                      <marker id={`arrow-${gIndex}`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill={mode === 'dark' ? '#475569' : '#94A3B8'} />
+                      </marker>
+                    </defs>
+                    {group.okrs.length > 1 && (
+                      <>
+                        {/* Horizontal line from Assignor to spine */}
+                        <path d="M 0 50 L 35 50" fill="none" stroke={mode === 'dark' ? '#475569' : '#94A3B8'} strokeWidth="2.5"/>
+
+                         {/* Vertical spine */}
+                        <path d={`
+                                M 35 15
+                                L 35 85
+                                `}
+                              fill="none"
+                              stroke={mode === 'dark' ? '#475569' : '#94A3B8'}
+                              strokeWidth="2.5"
+                        />
+                      </>
+                    )}
+                    {group.okrs.map((_, i) => {
+                      const total = group.okrs.length;
+
+                      // Position of each branch
+                      const endY = total === 1 ? 50 : 15 + (i / (total - 1)) * 70;
+
+                      return (
+                        <path 
+                          key={i}
+                          d={`
+                            M ${total === 1 ? 0 : 35} ${endY}
+                            L 90 ${endY}
+                          `}
+                          fill="none"
+                          stroke={mode === 'dark' ? '#475569' : '#94A3B8'}
+                          strokeWidth="2.5"
+                          markerEnd={`url(#arrow-${gIndex})`}
+                        />
+                      );
+                    })}
+                  </svg>
+                </Box>
+
+                {/* SVG CONNECTORS */}
+                <Box sx={{ width: 70, flexShrink: 0, position: 'relative', alignSelf: 'stretch', display: 'flex', alignItems: 'center' }}>
                   <svg style={{ width: '100%', height: '100%', position: 'absolute', overflow: 'visible' }}>
                     {group.okrs.map((_, i) => {
                       const total = group.okrs.length;
@@ -561,10 +612,10 @@ export default function OKRTrackingEngine() {
                       return (
                         <path
                           key={i}
-                          d={`M 0,50% C 40,50% 40,${endY} 80,${endY}`}
+                          d={`M 0,50% C 35,50% 35,${endY} 70,${endY}`}
                           fill="none"
-                          stroke={mode === 'dark' ? '#475569' : '#94A3B8'}
-                          strokeWidth="2.5"
+                          stroke={isDark ? '#334155' : '#cbd5e1'}
+                          strokeWidth="2"
                         />
                       );
                     })}
@@ -598,121 +649,29 @@ export default function OKRTrackingEngine() {
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                           <Typography variant="h6" fontWeight={800} sx={{ fontSize: '1.05rem', lineHeight: 1.3, pr: 2 }}>
                             {okr.title}
->>>>>>> 8a409e2b7725edb23cb4b0b1e29f419b2210bec9
                           </Typography>
                           <Typography sx={{ fontSize: '0.68rem', color: 'text.secondary', fontWeight: 600 }}>
                             {group.assignorRole} &bull; {group.okrs.length} OKRs Delegated
                           </Typography>
                         </Box>
-                      </Box>
 
-                      <Box sx={{ position: 'relative', height: 18, bgcolor: surface2, borderRadius: '8px', overflow: 'hidden' }}>
-                        <Box sx={{ height: '100%', width: `${group.avgProgress}%`, background: barGradient(group.avgProgress), transition: 'width .5s ease' }} />
-                        <Typography sx={{
-                          position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-                          fontWeight: 800, fontSize: '0.62rem', color: isDark ? '#fff' : '#0f172a',
-                        }}>
-                          {group.avgProgress}% Avg
-                        </Typography>
-                      </Box>
-                    </Card>
-
-                    {/* SVG CONNECTORS */}
-                    <Box sx={{ width: 70, flexShrink: 0, position: 'relative', alignSelf: 'stretch', display: 'flex', alignItems: 'center' }}>
-                      <svg style={{ width: '100%', height: '100%', position: 'absolute', overflow: 'visible' }}>
-                        {group.okrs.map((_, i) => {
-                          const total = group.okrs.length;
-                          const endY = total === 1 ? '50%' : `${((i / (total - 1)) * 80) + 10}%`;
-                          return (
-                            <path
-                              key={i}
-                              d={`M 0,50% C 35,50% 35,${endY} 70,${endY}`}
-                              fill="none"
-                              stroke={isDark ? '#334155' : '#cbd5e1'}
-                              strokeWidth="2"
-                            />
-                          );
-                        })}
-                      </svg>
-                    </Box>
-
-                    {/* RIGHT NODES: ASSIGNED OBJECTIVES */}
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, flexGrow: 1 }}>
-                      {group.okrs.map((okr) => {
-                        const assigneeUser = directoryUsers.find(u => u.name === okr.ownerName);
-                        const token = statusToken(okr.status);
-                        return (
-                          <Card
-                            key={okr.id}
-                            elevation={0}
-                            onClick={() => setSelectedFlowOkr(okr)}
-                            sx={{
-                              p: 2.5, bgcolor: 'background.paper', borderRadius: '16px',
-                              border: `1px solid ${borderColor}`, cursor: 'pointer', overflow: 'hidden',
-                              transition: 'border-color .15s ease, transform .15s ease',
-                              '&:hover': { borderColor: token.color, transform: 'translateY(-1px)' },
-                            }}
-                          >
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, mb: 1 }}>
-                              <Chip
-                                label={okr.status}
-                                size="small"
-                                sx={{
-                                  height: 20, fontSize: '0.62rem', fontWeight: 800, letterSpacing: '0.04em',
-                                  textTransform: 'uppercase', color: token.color, bgcolor: token.bg,
-                                  border: `1px solid ${token.border}`,
-                                }}
-                              />
-                              <Typography sx={{ fontSize: '0.65rem', color: 'text.secondary', fontWeight: 600 }}>
-                                Assigned by <Box component="span" sx={{ color: 'text.primary' }}>{okr.assignedBy}</Box>
-                              </Typography>
-                            </Box>
-
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 2 }}>
-                              <Typography sx={{ fontWeight: 800, fontSize: '1.02rem', lineHeight: 1.3 }}>
-                                {okr.title}
-                              </Typography>
-                              <IconButton size="small" sx={{ color: 'text.secondary', mt: -0.5 }}>
-                                <OpenInNew sx={{ fontSize: 15 }} />
-                              </IconButton>
-                            </Box>
-
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2, mb: 2 }}>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
-                                <Tooltip title={`Assigned to ${okr.ownerName} (${okr.department})`}>
-                                  <Avatar sx={{ width: 26, height: 26, bgcolor: 'primary.main', color: '#0b0e14', fontSize: '0.65rem', fontWeight: 800 }}>
-                                    {assigneeUser?.initial || okr.ownerName.charAt(0)}
-                                  </Avatar>
-                                </Tooltip>
-                                <Typography sx={{ fontSize: '0.75rem', fontWeight: 600 }}>{okr.ownerName}</Typography>
-                                <Box sx={{ width: 4, height: 4, borderRadius: '50%', bgcolor: 'text.secondary', opacity: 0.5 }} />
-                                <Chip label={okr.department} size="small" sx={{ height: 22, fontSize: '0.68rem', fontWeight: 600, bgcolor: surface2, color: 'text.secondary' }} />
-                              </Box>
-
-                              <Box sx={{ display: 'flex', gap: 2, fontSize: '0.68rem', color: 'text.secondary', fontWeight: 600 }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                  <GpsFixed sx={{ fontSize: 13, color: token.color }} /> {okr.keyResults.length} KRs
-                                </Box>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                  <ChecklistRtl sx={{ fontSize: 13, color: 'secondary.main' }} /> {okr.tasksCount} Tasks
-                                </Box>
-                              </Box>
-                            </Box>
-
-                            <Box sx={{ position: 'relative', height: 8, bgcolor: surface2, borderRadius: '6px', overflow: 'hidden' }}>
-                              <Box sx={{ height: '100%', width: `${okr.progress}%`, background: barGradient(okr.progress), borderRadius: '6px' }} />
-                            </Box>
-                            <Typography sx={{ fontSize: '0.68rem', fontWeight: 800, color: 'text.secondary', mt: 0.75, textAlign: 'right' }}>
-                              {okr.progress}% Complete
-                            </Typography>
-                          </Card>
-                        );
-                      })}
-                    </Box>
-                  </Box>
-                ))}
+                        <Box sx={{ position: 'relative', height: 18, bgcolor: surface2, borderRadius: '8px', overflow: 'hidden' }}>
+                          <Box sx={{ height: '100%', width: `${group.avgProgress}%`, background: barGradient(group.avgProgress), transition: 'width .5s ease' }} />
+                          <Typography sx={{
+                            position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+                            fontWeight: 800, fontSize: '0.62rem', color: isDark ? '#fff' : '#0f172a',
+                          }}>
+                            {group.avgProgress}% Avg
+                          </Typography>
+                        </Box>
+                      </Card>
+                    );
+                  })}
+                </Box>
               </Box>
-              )}            
+            ))}
+          </Box>
+        )}  
 
             {/* --- LIST VIEW (mirrors the HTML reference: 8-col objective feed + 4-col insight rail) --- */}
             {viewMode === 'list' && (
@@ -1031,7 +990,6 @@ export default function OKRTrackingEngine() {
             <Button variant="contained" onClick={handleCreateOkr} sx={{ borderRadius: '10px', fontWeight: 800 }}>Assign OKR</Button>
           </DialogActions>
         </Dialog>
-
       </Box>
     </ThemeProvider>
   );
@@ -1046,7 +1004,7 @@ function OkrDetailContent({ okr, isDark, surface2, borderColor, commentInputs, s
           <Card variant="outlined" sx={{ p: 2, bgcolor: surface2, borderColor, borderRadius: '12px' }}>
             <Typography sx={{ fontSize: '0.65rem', fontWeight: 800, color: 'text.secondary', letterSpacing: '0.05em' }}>ASSIGNMENT DELEGATION</Typography>
             <Typography sx={{ fontSize: '0.85rem', fontWeight: 700, mt: 0.5 }}>
-              {okr.assignedBy} <Box component="span" sx={{ color: 'text.secondary', fontWeight: 400 }}>assigned to</Box> {okr.ownerName}
+              {okr.assignedBy}{' '}<Box component="span" sx={{ color: 'text.secondary', fontWeight: 400 }}>assigned to {okr.ownerName}</Box>
             </Typography>
           </Card>
         </Grid>
@@ -1089,7 +1047,7 @@ function OkrDetailContent({ okr, isDark, surface2, borderColor, commentInputs, s
         </Typography>
         {okr.comments.map((comment) => (
           <Box key={comment.id} sx={{ mb: 1.5, p: 1.5, bgcolor: 'background.paper', borderRadius: '10px', border: `1px solid ${borderColor}` }}>
-            <Typography component="span" sx={{ fontSize: '0.78rem', fontWeight: 800 }}>{comment.author}: </Typography>
+            <Typography component="span" sx={{ fontSize: '0.78rem', fontWeight: 800 }}>{comment.author}:{' '}</Typography>
             <Typography component="span" sx={{ fontSize: '0.78rem' }}>{comment.text}</Typography>
           </Box>
         ))}
