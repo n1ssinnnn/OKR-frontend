@@ -741,7 +741,7 @@ export default function OKRTrackingEngine() {
                   </Box>
                 ))}
               </Box>
-            )}
+              )}            
 
             {/* --- LIST VIEW (mirrors the HTML reference: 8-col objective feed + 4-col insight rail) --- */}
             {viewMode === 'list' && (
