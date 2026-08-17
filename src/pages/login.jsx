@@ -16,7 +16,7 @@ import { LockOutlined } from '@mui/icons-material';
 // These represent the accounts stored in your database
 const demoAccounts = [
   { id: 1, name: 'Dr. Arisara', role: 'Executive', department: 'Policy Strategy', email: 'admin@school.edu' },
-  { id: 2, name: 'Lead Engineer', role: 'Manager', department: 'Engineering Hub', email: 'manager@school.edu' },
+  { id: 2, name: 'Lead Engineer Team', role: 'Team Lead', department: 'Engineering Hub', email: 'manager@school.edu' },
   { id: 3, name: 'LMS Developer', role: 'Employee', department: 'Engineering Hub', email: 'employee@school.edu' },
 ];
 

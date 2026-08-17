@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   ThemeProvider,
   createTheme,
@@ -168,13 +168,25 @@ const initialOKRs = [
   }
 ];
 
-export default function OKRTrackingEngine() {
+export default function OKRTrackingEngine({currentUser}) {
   const [mode, setMode] = useState('dark');
   const [viewMode, setViewMode] = useState('flow'); // 'flow' or 'list'
-  const [currentUser, setCurrentUser] = useState(directoryUsers[0]); // Default to Executive Dr. Arisara
+  //const [currentUser, setCurrentUser] = useState(null); // Default to Executive Dr. Arisara
   const [okrs, setOkrs] = useState(initialOKRs);
   const [commentInputs, setCommentInputs] = useState({});
   const [selectedFlowOkr, setSelectedFlowOkr] = useState(null);
+  const allowedAssignees = directoryUsers.filter(u => {
+    if (!currentUser) return false;
+    if (currentUser.role === 'Executive'){
+      return u.role === 'Team Lead' || u.role === 'Employee';
+    }
+    if (currentUser.role === 'Team Lead'){
+      return u.role === 'Employee';
+    }
+    if (currentUser.role === 'Employee'){
+      return false;
+    }
+  })
 
   // Modal State
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -184,6 +196,27 @@ export default function OKRTrackingEngine() {
     assignedToId: directoryUsers[1].id,
     dueDate: '2026-06-30'
   });
+
+  useEffect(() => {
+    if (allowedAssignees.length === 0){
+      setNewOkr(prev => ({
+        ...prev,
+        assignedToId: ''
+      }));
+      return;
+    }
+
+    const currentSelectionExists = allowedAssignees.some(
+      u => u.id === Number(newOkr.assingedToId)
+    );
+
+    if (!currentSelectionExists){
+      setNewOkr(prev => ({
+        ...prev,
+        assignedToId: allowedAssignees[0].id
+      }));
+    }
+  }, [currentUser, allowedAssignees.length]);
 
   // --- THEME ---
   const theme = useMemo(() => createTheme({
@@ -237,6 +270,7 @@ export default function OKRTrackingEngine() {
 
   // --- HANDLERS ---
   const handleCreateOkr = () => {
+    if (currentUser.role === 'Employee') return;
     if (!newOkr.title) return;
     const assignee = directoryUsers.find(u => u.id === Number(newOkr.assignedToId));
 
@@ -311,22 +345,6 @@ export default function OKRTrackingEngine() {
           </Box>
 
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-            {/* USER SIMULATOR SELECTOR */}
-            <FormControl size="small" sx={{ minWidth: 200, bgcolor: 'background.paper', borderRadius: 2 }}>
-              <InputLabel id="user-select-label"><PersonPin fontSize="small" /> Active User</InputLabel>
-              <Select
-                labelId="user-select-label"
-                value={currentUser.id}
-                label="Active User"
-                onChange={(e) => setCurrentUser(directoryUsers.find(u => u.id === e.target.value))}
-              >
-                {directoryUsers.map(u => (
-                  <MenuItem key={u.id} value={u.id}>
-                    {u.name} ({u.role})
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
 
             <Paper elevation={0} sx={{ border: `1px solid ${mode === 'dark' ? '#2A2D3A' : '#CBD5E1'}`, borderRadius: 2, p: 0.5, bgcolor: 'background.paper' }}>
               <ToggleButtonGroup
@@ -347,10 +365,11 @@ export default function OKRTrackingEngine() {
             <IconButton onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')} sx={{ bgcolor: 'background.paper', border: `1px solid ${mode === 'dark' ? '#2A2D3A' : '#CBD5E1'}` }}>
               {mode === 'dark' ? <LightMode color="warning" /> : <DarkMode color="primary" />}
             </IconButton>
-
-            <Button variant="contained" startIcon={<Add />} onClick={() => setCreateModalOpen(true)} sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 700 }}>
-              Draft & Assign OKR
-            </Button>
+            {currentUser.role !== 'Employee' && (
+              <Button variant="contained" startIcon={<Add />} onClick={() => setCreateModalOpen(true)} sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 700 }}>
+                Draft & Assign OKR
+              </Button>
+            )}
           </Box>
         </Box>
 
@@ -625,11 +644,12 @@ export default function OKRTrackingEngine() {
                   <TextField 
                     select 
                     label="Assignee (Got Assigned)" 
-                    fullWidth 
-                    value={newOkr.assignedToId}
-                    onChange={(e) => setNewOkr({ ...newOkr, assignedToId: e.target.value })}
+                    fullWidth
+                    disabled={currentUser.role === 'Employee'}
+                    value={newOkr.assignedToId || ''}
+                    onChange={(e) => setNewOkr(prev => ({...prev, assignedToId: Number(e.target.value)}))}
                   >
-                    {directoryUsers.filter(u => u.id !== currentUser.id).map(u => (
+                    {allowedAssignees.map(u => (
                       <MenuItem key={u.id} value={u.id}>{u.name} ({u.department})</MenuItem>
                     ))}
                   </TextField>
