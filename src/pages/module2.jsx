@@ -41,6 +41,7 @@ import {
   ViewList,
   Send,
   PersonPin,
+  Timeline,
 } from '@mui/icons-material';
 
 // --- DIRECTORY USERS MATCHING YOUR ORGANIZATION MAP ---
@@ -373,6 +374,12 @@ export default function OKRTrackingEngine({currentUser}) {
           </Box>
         </Box>
 
+        <UnifiedOKRTimeline
+          okrs={okrs}
+          mode={mode}
+          getBarColor={getBarColor}
+        />
+
         {/* --- FLOWCHART CANVAS VIEW --- */}
         {viewMode === 'flow' && (
           <Box sx={{ maxWidth: 1200, mx: 'auto', py: 2 }}>
@@ -502,7 +509,7 @@ export default function OKRTrackingEngine({currentUser}) {
                       >
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                           <Typography variant="h6" fontWeight={800} sx={{ fontSize: '1.05rem', lineHeight: 1.3, pr: 2 }}>
-                            {okr.title}
+                            {okr.title} &bull; Due {okr.dueDate}
                           </Typography>
                           <IconButton size="small"><OpenInNew fontSize="inherit" /></IconButton>
                         </Box>
@@ -673,6 +680,549 @@ export default function OKRTrackingEngine({currentUser}) {
 
       </Box>
     </ThemeProvider>
+  );
+}
+
+function UnifiedOKRTimeline({ okrs, mode, getBarColor }) {
+  if (!okrs || okrs.length === 0) return null;
+
+  const toDate = (dateString) => {
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  };
+
+  const MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+  // Find earliest start date
+  const earliestStart = new Date(
+    Math.min(
+      ...okrs.map(okr => toDate(okr.startDate).getTime())
+    )
+  );
+
+  // Find latest due date
+  const latestDue = new Date(
+    Math.max(
+      ...okrs.map(okr => toDate(okr.dueDate).getTime())
+    )
+  );
+
+  const totalDays = Math.max(
+    1,
+    Math.ceil(
+      (latestDue - earliestStart) / MS_PER_DAY
+    )
+  );
+
+  const today = new Date();
+
+  // Calculate today progress
+  const todayProgress = Math.round(
+    Math.min(
+      100,
+      Math.max(
+        0,
+        ((today - earliestStart)/MS_PER_DAY/totalDays)*100
+      )
+    )
+  );
+
+  // Calculate where a date appears on the timeline
+  const getPosition = (dateString) => {
+    const date = toDate(dateString);
+
+    return (
+      ((date - earliestStart) / MS_PER_DAY / totalDays) * 100
+    );
+  };
+
+  const formatDate = (dateString) => {
+    return toDate(dateString).toLocaleDateString(
+      'en-US',
+      {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      }
+    );
+  };
+
+  // Generate month labels
+  const months = [];
+
+  const monthCursor = new Date(
+    earliestStart.getFullYear(),
+    earliestStart.getMonth(),
+    1
+  );
+
+  while (monthCursor <= latestDue) {
+    months.push(new Date(monthCursor));
+
+    monthCursor.setMonth(
+      monthCursor.getMonth() + 1
+    );
+  }
+
+  return (
+    <Box
+      sx={{
+        maxWidth: 1200,
+        mx: 'auto',
+        p: 4,
+        borderRadius: 3,
+        bgcolor: 'background.paper',
+        border: `1px solid ${
+          mode === 'dark'
+            ? '#2A2D3A'
+            : '#E2E8F0'
+        }`,
+        overflowX: 'auto',
+      }}
+    >
+
+      {/* TITLE */}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 5,
+        }}
+      >
+        <Box>
+          <Typography
+            variant="h6"
+            fontWeight={800}
+          >
+            Organization OKR Timeline
+          </Typography>
+
+          <Typography
+            variant="body2"
+            color="text.secondary"
+          >
+            Overall schedule from the earliest
+            start date to the latest due date
+          </Typography>
+        </Box>
+
+        <Chip
+          label={`${todayProgress}% Overall Progress`}
+          color={
+            todayProgress >= 75
+              ? 'success'
+              : todayProgress >= 40
+              ? 'warning'
+              : 'error'
+          }
+          sx={{
+            fontWeight: 800,
+          }}
+        />
+      </Box>
+
+      <Box
+        sx={{
+          minWidth: 900,
+          px: 3,
+        }}
+      >
+
+        {/* MONTHS */}
+        <Box
+          sx={{
+            position: 'relative',
+            height: 45,
+            mb: 1,
+          }}
+        >
+          {months.map((month, index) => {
+
+            const position =
+              ((month - earliestStart) /
+                (latestDue - earliestStart)) *
+              100;
+
+            return (
+              <Box
+                key={index}
+                sx={{
+                  position: 'absolute',
+                  left: `${Math.max(0, position)}%`,
+                  transform: 'translateX(-50%)',
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  fontWeight={800}
+                  color="text.secondary"
+                >
+                  {month.toLocaleDateString(
+                    'en-US',
+                    {
+                      month: 'short',
+                    }
+                  )}
+                </Typography>
+              </Box>
+            );
+          })}
+        </Box>
+
+
+        {/* MAIN TIMELINE */}
+        <Box
+          sx={{
+            position: 'relative',
+            height: 110,
+            mb: 6,
+          }}
+        >
+
+          {/* BACKGROUND LINE */}
+          <Box
+            sx={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              top: '50%',
+              height: 10,
+              borderRadius: 5,
+              bgcolor:
+                mode === 'dark'
+                  ? '#2A2D3A'
+                  : '#E2E8F0',
+              transform: 'translateY(-50%)',
+            }}
+          />
+
+
+          {/* OVERALL PROGRESS BAR */}
+          <Box
+            sx={{
+              position: 'absolute',
+              left: 0,
+              top: '50%',
+              height: 10,
+              width: `${todayProgress}%`,
+              borderRadius: 5,
+              bgcolor: getBarColor(
+                todayProgress
+              ),
+              transform: 'translateY(-50%)',
+              transition:
+                'width 0.5s ease',
+            }}
+          />
+
+
+          {/* START DATE */}
+          <Box
+            sx={{
+              position: 'absolute',
+              left: 0,
+              top: '50%',
+              transform:
+                'translate(-50%, -50%)',
+              zIndex: 3,
+            }}
+          >
+            <Box
+              sx={{
+                width: 18,
+                height: 18,
+                borderRadius: '50%',
+                bgcolor: '#2563EB',
+                border: `3px solid ${
+                  mode === 'dark'
+                    ? '#1A1D24'
+                    : '#FFFFFF'
+                }`,
+              }}
+            />
+
+            <Typography
+              variant="caption"
+              sx={{
+                position: 'absolute',
+                top: 20,
+                left: 0,
+                whiteSpace: 'nowrap',
+                fontWeight: 700,
+              }}
+            >
+              Start
+            </Typography>
+
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{
+                position: 'absolute',
+                top: 38,
+                left: 0,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {formatDate(
+                `${earliestStart.getFullYear()}-${String(
+                  earliestStart.getMonth() + 1
+                ).padStart(2, '0')}-${String(
+                  earliestStart.getDate()
+                ).padStart(2, '0')}`
+              )}
+            </Typography>
+          </Box>
+
+
+          {/* DUE DATE MARKERS */}
+          {okrs.map((okr, index) => {
+
+            const position = getPosition(
+              okr.dueDate
+            );
+
+            // Alternate markers above and below
+            const showAbove =
+              index % 2 === 0;
+
+            return (
+              <Box
+                key={okr.id}
+                sx={{
+                  position: 'absolute',
+                  left: `${position}%`,
+                  top: '50%',
+                  transform:
+                    'translate(-50%, -50%)',
+                  zIndex: 4,
+                }}
+              >
+
+                {/* DUE DATE DOT */}
+                <Tooltip
+                  title={
+                    <Box>
+                      <Typography
+                        variant="body2"
+                        fontWeight={800}
+                      >
+                        {okr.title}
+                      </Typography>
+
+                      <Typography
+                        variant="caption"
+                      >
+                        Due: {formatDate(okr.dueDate)} Progress: {okr.progress}%
+                      </Typography>
+                    </Box>
+                  }
+                  arrow
+                >
+                  <Box
+                    sx={{
+                      width: 18,
+                      height: 18,
+                      borderRadius: '50%',
+                      bgcolor:
+                        getBarColor(
+                          okr.progress
+                        ),
+                      border: `3px solid ${
+                        mode === 'dark'
+                          ? '#1A1D24'
+                          : '#FFFFFF'
+                      }`,
+                      cursor: 'pointer',
+                      transition:
+                        'transform 0.2s ease',
+                      '&:hover': {
+                        transform: 'scale(1.3)',
+                      },
+                    }}
+                  />
+                </Tooltip>
+
+
+                {/* VERTICAL CONNECTOR */}
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    left: '50%',
+                    width: 2,
+                    height: 28,
+                    bgcolor:
+                      mode === 'dark'
+                        ? '#64748B'
+                        : '#94A3B8',
+                    transform:
+                      'translateX(-50%)',
+                    ...(showAbove
+                      ? { bottom: 10 }
+                      : { top: 10 }),
+                  }}
+                />
+
+
+                {/* TASK LABEL */}
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    left: '50%',
+                    transform:
+                      'translateX(-50%)',
+                    width: 130,
+                    textAlign: 'center',
+                    ...(showAbove
+                      ? {
+                          bottom: 42,
+                        }
+                      : {
+                          top: 42,
+                        }),
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    fontWeight={800}
+                    sx={{
+                      display: 'block',
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {okr.title}
+                  </Typography>
+
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                  >
+                    Due {formatDate(
+                      okr.dueDate
+                    )}
+                  </Typography>
+                </Box>
+
+              </Box>
+            );
+          })}
+
+
+          {/* LATEST DUE DATE */}
+          <Box
+            sx={{
+              position: 'absolute',
+              left: '100%',
+              top: '50%',
+              transform:
+                'translate(-50%, -50%)',
+              zIndex: 3,
+            }}
+          >
+            <Box
+              sx={{
+                width: 18,
+                height: 18,
+                borderRadius: '50%',
+                bgcolor: '#EF4444',
+                border: `3px solid ${
+                  mode === 'dark'
+                    ? '#1A1D24'
+                    : '#FFFFFF'
+                }`,
+              }}
+            />
+
+            <Typography
+              variant="caption"
+              sx={{
+                position: 'absolute',
+                top: 20,
+                right: 0,
+                whiteSpace: 'nowrap',
+                fontWeight: 700,
+              }}
+            >
+              Latest Due
+            </Typography>
+
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{
+                position: 'absolute',
+                top: 38,
+                right: 0,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {formatDate(
+                `${latestDue.getFullYear()}-${String(
+                  latestDue.getMonth() + 1
+                ).padStart(2, '0')}-${String(
+                  latestDue.getDate()
+                ).padStart(2, '0')}`
+              )}
+            </Typography>
+          </Box>
+
+        </Box>
+
+
+        {/* LEGEND */}
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 3,
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            mt: 2,
+          }}
+        >
+          <Typography
+            variant="caption"
+            color="text.secondary"
+          >
+            <Box
+              component="span"
+              sx={{
+                color: '#2563EB',
+                fontWeight: 900,
+              }}
+            >
+              ●
+            </Box>
+            {' '}Earliest Start
+          </Typography>
+
+          <Typography
+            variant="caption"
+            color="text.secondary"
+          >
+            <Box
+              component="span"
+              sx={{
+                color: '#EF4444',
+                fontWeight: 900,
+              }}
+            >
+              ●
+            </Box>
+            {' '}Latest Due Date
+          </Typography>
+
+          <Typography
+            variant="caption"
+            color="text.secondary"
+          >
+            Colored markers represent
+            individual OKR due dates
+          </Typography>
+        </Box>
+
+      </Box>
+    </Box>
   );
 }
 
