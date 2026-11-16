@@ -84,6 +84,9 @@ function isOwner(ownerId, currentUser) {
 function canUpdateKR(objective, kr, currentUser) {
   return canEdit(objective, currentUser) || isOwner(objective.ownerId, currentUser) || isOwner(kr.ownerId, currentUser);
 }
+
+export { canEdit, canUpdateKR, isOwner, krProgress, normalizeObjective };
+
 function canContribute(objective, currentUser) {
   return canEdit(objective, currentUser) || isOwner(objective.ownerId, currentUser) || objective.keyResults.some(kr => isOwner(kr.ownerId, currentUser));
 }

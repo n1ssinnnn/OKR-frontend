@@ -18,6 +18,7 @@ import Settings from '@mui/icons-material/Settings';
 import TrackChanges from '@mui/icons-material/TrackChanges';
 import ChevronLeft from '@mui/icons-material/ChevronLeft';
 import MenuOpen from '@mui/icons-material/MenuOpen';
+import EventNote from '@mui/icons-material/EventNote';
 
 import OKRUserManagement from './pages/module1.jsx';
 import OKRTrackingEngine from './pages/module2.jsx';
@@ -26,6 +27,7 @@ import OKRWorkspace, {
   OKR_CYCLES,
 } from './pages/module3.jsx';
 import OKRAlignment from './pages/module4.jsx';
+import OKRCheckIns from './pages/module5.jsx';
 import SettingsPage from './pages/setting.jsx';
 import LoginScreen from './pages/login.jsx';
 
@@ -44,6 +46,7 @@ const theme = createTheme({
 const navigation = [
   { id: 'objectives', label: 'Objectives & KRs', Icon: GpsFixed, group: 'Workspace' },
   { id: 'alignment', label: 'Alignment', Icon: AccountTree, group: 'Workspace' },
+  { id: 'check-ins', label: 'Check-ins', Icon: EventNote, group: 'Workspace' },
   { id: 'tracking', label: 'Tracking', Icon: TrackChanges, group: 'Workspace' },
   { id: 'users', label: 'Employees', Icon: PeopleAlt, group: 'Organization' },
 ];
@@ -53,9 +56,31 @@ export default function App() {
   const [activeView, setActiveView] = useState('objectives');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  // Modules 3 and 4 use the same data, including parent links and KR progress.
-  // Layout reference: retain your existing API/store binding if it differs.
-  const [objectives, setObjectives] = useState(INITIAL_OBJECTIVES);
+  const [workspace, setWorkspace] = useState({
+    objectives: INITIAL_OBJECTIVES,
+    checkIns: [],
+  });
+  const { objectives, checkIns } = workspace;
+
+  function setObjectives(nextObjectives) {
+    setWorkspace(previous => ({ ...previous, objectives: nextObjectives }));
+  }
+
+  function saveCheckIn({ objective, entry }) {
+    setWorkspace(previous => ({
+      objectives: previous.objectives.map(item => item.id === objective.id ? objective : item),
+      checkIns: [entry, ...previous.checkIns],
+    }));
+  }
+
+  function saveFeedback({ entryId, feedback }) {
+    setWorkspace(previous => ({
+      ...previous,
+      checkIns: previous.checkIns.map(entry => entry.id === entryId
+        ? { ...entry, feedback: [...(entry.feedback ?? []), feedback] }
+        : entry),
+    }));
+  }
 
   const handleLogin = user => {
     setCurrentUser(user);
@@ -138,6 +163,16 @@ export default function App() {
             {activeView === 'tracking' && <OKRTrackingEngine currentUser={currentUser} />}
             {activeView === 'objectives' && <OKRWorkspace currentUser={currentUser} objectives={objectives} cycles={OKR_CYCLES} onObjectivesChange={setObjectives} />}
             {activeView === 'alignment' && <OKRAlignment currentUser={currentUser} objectives={objectives} cycles={OKR_CYCLES} onObjectivesChange={setObjectives} />}
+            {activeView === 'check-ins' && (
+              <OKRCheckIns
+                currentUser={currentUser}
+                objectives={objectives}
+                cycles={OKR_CYCLES}
+                checkIns={checkIns}
+                onSaveCheckIn={saveCheckIn}
+                onSaveFeedback={saveFeedback}
+              />
+            )}
             {activeView === 'settings' && <SettingsPage currentUser={currentUser} />}
           </Box>
         </Box>
